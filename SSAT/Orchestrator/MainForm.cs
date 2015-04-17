@@ -18,31 +18,55 @@ namespace Orchestrator
 {
     public partial class MainForm : Form
     {
-        TestCase testCase1;
-        string _formResult = "";
+        IList<TestCase> _testCases = new List<TestCase>();
+        TestCase _selectedTestCase;
+        string _formResult = string.Empty;
         public MainForm()
         {
             InitializeComponent();
-            InitializeSteps();
-            TestEnvironment.Environment.Instance.Setup(testCase1); 
         }
 
-
-        private void Run(object sender, EventArgs e)
+        private void LoadTestCases()
         {
-            var files = testCase1.Steps.SelectMany(t => t.Actions.Where(a => a.FileState == FileState.NotReady)).ToList();
+            _testCases = new TestAccess().LoadTestCases();
+
+            _testTv.BeginUpdate();
+            _testTv.Nodes.Clear();
+            _testTv.Nodes.AddRange(_testCases.Select(t => new TreeNode(t.Name) { Tag = t }).ToArray());
+            _testTv.EndUpdate();
+        }
+
+        private void OnBtnReloadClicked(object sender, EventArgs e)
+        {
+            LoadTestCases();
+        }
+
+        private void OnBtnRunClicked(object sender, EventArgs e)
+        {
+            // TODO Check
+            TestEnvironment.Environment.Instance.Setup(_testCases);
+            foreach (var testCase in _testCases)
+            {
+                RunTestCase(testCase);
+            }
+        }
+
+        private void RunTestCase(TestCase testCase)
+        {
+            var steps = new Queue<Step>(testCase.Steps);
+            var files = steps.SelectMany(t => t.Actions.Where(a => a.FileState == FileState.NotReady)).ToList();
             Thread runScriptThread = new Thread(new ThreadStart(() => SendFilesHandler(files)));  
             runScriptThread.Start();
 
-            while (testCase1.Steps.Any())
+            while (steps.Any())
             {
-                Step currentStep = testCase1.Steps.Dequeue();
-                while (currentStep.Actions.Any())
+                var actions = new Queue<TestAction>(steps.Dequeue().Actions);
+                while (actions.Any())
                 {
-                    TestAction currentAction = currentStep.Actions.Peek();
+                    TestAction currentAction = actions.Peek();
                     if (currentAction.FileState == FileState.Ready || currentAction.FileState == FileState.NoFile)
                     {
-                        currentAction = currentStep.Actions.Dequeue();
+                        currentAction = actions.Dequeue();
                         TcpClient clientSocket = new TcpClient();
                         clientSocket.Connect(currentAction.TargetClient.IpAddress, Constants.RUN_SCRIPT_PORT);
                         Connectivity.SendData(clientSocket, JsonConvert.SerializeObject(currentAction.Operation));
@@ -65,13 +89,15 @@ namespace Orchestrator
                             currentAction.Response = Connectivity.GetData(clientSocket);
                         }
                         Console.WriteLine(currentAction.Response);
+                        // TODO
+                        _resTb.Text = currentAction.Response;
                         clientSocket.Close();                     
                     }
                 }
             }
         }
 
-        public void SendFilesHandler(IList<TestAction> actions)
+        private void SendFilesHandler(IList<TestAction> actions)
         {           
             foreach (var action in actions)
             {
@@ -83,33 +109,7 @@ namespace Orchestrator
             } 
         }
 
-        private void InitializeSteps()
-        {
-            testCase1 = new TestCase();
-            Client My_PC = new Client(IPAddress.Loopback, "My PC");
-            Step tc1step1 = new Step();
-
-            Operation o_ac1st1 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
-            Operation o_ac2st1 = new Operation("do!", TestTechnology.Human);
-            Operation o_ac3st1 = new Operation("reusableScriptTest2.sikuli", TestTechnology.Sikuli);
-
-            TestAction step1action1 = new TestAction(My_PC, o_ac1st1, true);
-            TestAction step1action2 = new TestAction(My_PC, o_ac2st1, false);
-            TestAction step1action3 = new TestAction(My_PC, o_ac3st1, true);
-
-            tc1step1.Actions.Enqueue(step1action1);
-            tc1step1.Actions.Enqueue(step1action2);
-            tc1step1.Actions.Enqueue(step1action3);
-
-            testCase1.Steps.Enqueue(tc1step1);
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            InitializeSteps();
-        }
-
-        void LocalMessageHandler(ManualForm frmMan, IPAddress ip_add)
+        private void LocalMessageHandler(ManualForm frmMan, IPAddress ip_add)
         {
             frmMan.ShowDialog();
             _formResult = frmMan.Answer + "  Comment: " + frmMan.Comment;
@@ -118,62 +118,23 @@ namespace Orchestrator
             Connectivity.SendData(clientSocketManual, "done");
             clientSocketManual.Close();
         }
+
+        private void OnTestCaseSelectionChanged(object sender, TreeViewEventArgs e)
+        {
+            if (_selectedTestCase != _testTv.SelectedNode.Tag)
+            {
+                _selectedTestCase = _testTv.SelectedNode.Tag as TestCase;
+                if (_selectedTestCase != null)
+                {
+                    _descTb.Text = _selectedTestCase.Description;
+                    _stepTv.BeginUpdate();
+                    _stepTv.Nodes.Clear();
+                    _stepTv.Nodes.AddRange(
+                        _selectedTestCase.Steps.SelectMany(s => s.Actions)
+                                         .Select(a => new TreeNode(a.Description) { Tag = a }).ToArray());
+                    _stepTv.EndUpdate();
+                }
+            }
+        }
     }
 }
-
-
-
-
-
-
-
-    //        {
-
-    //    private void SendFiles(object sender, EventArgs e)
-    //    {
-    //        //foreach (var script in scriptsStandingQueue)
-    //        //{
-    //        //CHECK IF SCRIPTS EXISTS
-    //        //    Process.CompressFolder(script);
-    //        //}
-    //        while (testCase1.Any())
-    //        {
-    //            //    if (!ScriptIsRunning)
-    //            //  {
-    //            TcpClient clientSocket = new TcpClient();
-    //            TcpClient clientSocketResult = new TcpClient();
-    //            clientSocket.Connect(IPAddress.Loopback, Constants.WRITE_SCRIPT_PORT);
-    //            Connectivity.SendData(clientSocket, scriptsStandingQueue.Peek());
-    //            if (Connectivity.GetData(clientSocket) == Constants.FILENAME_RECEIVED_MSG)
-    //            {
-    //                Connectivity.SendFile(clientSocket, scriptsStandingQueue.Dequeue());
-    //            }
-    //            clientSocket.Close();
-    //            clientSocketResult.Connect(IPAddress.Loopback, Constants.WRITE_SCRIPT_PORT);
-    //            if (Connectivity.GetData(clientSocketResult) == Constants.FILE_RECEIVED_MSG)
-    //            {
-    //                //SCRIPT READY TO BE RUN
-    //            }
-    //            clientSocketResult.Close();
-    //            // ScriptIsRunning = true;
-    //        }
-    //        Thread.Sleep(500);
-    //    }
-
-    //    private void RunScripts(object sender, EventArgs e)
-    //    {
-    //        while (scriptsRUNQueue.Any())
-    //        {
-    //            TcpClient clientSocket = new TcpClient();
-    //            clientSocket.Connect(IPAddress.Loopback, Constants.RUN_SCRIPT_PORT);
-    //            Connectivity.SendData(clientSocket, scriptsRUNQueue.Dequeue());
-    //            labelResult.Text += "    " + Connectivity.GetData(clientSocket);
-    //            clientSocket.Close();
-    //        }
-    //    }
-    //}
-
-
-
-    //}
-

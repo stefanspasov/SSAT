@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO.Compression;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace SATFUtilities
 {
@@ -24,13 +25,23 @@ namespace SATFUtilities
             procStartInfo.RedirectStandardOutput = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
-
+            // TODO: Get admin credentials from config file
             procStartInfo.UserName = "administrator";
             procStartInfo.Password = SATFUtilities.Security.MakeSecureString("administrator");
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
 
             proc.StartInfo = procStartInfo;
-            proc.Start();
+            try
+            {
+                proc.Start();
+            }
+            catch (Win32Exception)
+            {
+                // Fallback to the current account
+                procStartInfo.UserName = string.Empty;
+                procStartInfo.Password = null;
+                proc.Start();
+            }
         }
 
 

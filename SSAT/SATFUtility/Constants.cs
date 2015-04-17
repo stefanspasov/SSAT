@@ -15,10 +15,10 @@ namespace SATFUtilities
         private const string UNZIPPED_SCRIPTS_FOLDER_CLIENT = "Scripts";
         private const string UNZIPPED_SCRIPTS_FOLDER_ORCH = "Scripts";
         private const string ZIPPED_SCRIPTS_FOLDER = "ScriptsZips";
-        public const string PYTHON_SERVER_NAME = "caller.sikuli";
+        public const string PYTHON_SERVER_NAME = "sikuli-server.sikuli";
         public const string SETUP_FOLDER = "Setup";
         public static string PROJECT_DIRECTORY = Directory.GetCurrentDirectory();
-        public const string SIKULI_IDE_FULL_PATH = "C:\\sikuli\\runIDE.cmd";
+        public const string SIKULI_IDE_FULL_PATH = "C:\\sikuli\\runIDE.cmd";// TODO
         public static string UnzippedScriptFolderClient
         {
             get

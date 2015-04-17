@@ -18,9 +18,11 @@ namespace TestEnvironment
 
         private Environment() { }
 
-        public void Setup(TestCase testCase)
+        public void Setup(IEnumerable<TestCase> testCases)
         {
-            var clientTechnologyPairs = testCase.Steps.SelectMany(s => s.Actions).Select(a => new { a.TargetClient.IpAddress, TestTechnology = a.Operation.Executor }).Distinct().ToList();
+            var clientTechnologyPairs = 
+                testCases.SelectMany(t => t.Steps).SelectMany(s => s.Actions)
+                         .Select(a => new { a.TargetClient.IpAddress, TestTechnology = a.Operation.Executor }).Distinct().ToList();
             foreach (var pair in clientTechnologyPairs)
             {
                 IOrganizer organizer = OrganizerFactory.Instance.CreateOrganizer(pair.TestTechnology);
