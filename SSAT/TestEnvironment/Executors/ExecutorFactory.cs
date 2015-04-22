@@ -11,6 +11,14 @@ namespace TestEnvironment.Executors
     {
         private ExecutorFactory() { }
         private static ExecutorFactory _instance;
+        private static CmdExecutor cmdE;
+        private static ManualExecutor manE;
+        private static SikuliExecutor sikE;
+        private static SimExecutor simE;
+        private static WriteExecutor wrE;
+        private static UnitTestExecutor utE;
+
+
         public static ExecutorFactory Instance()
         {
             if(_instance == null)
@@ -24,17 +32,41 @@ namespace TestEnvironment.Executors
             switch (executorType)
             {
                 case TestTechnology.Cmd:
-                    return new CmdExecutor();
+                    if (cmdE == null)
+                    {
+                        cmdE = new CmdExecutor();
+                    }
+                    return cmdE;
                 case TestTechnology.Human:
-                    return new ManualExecutor();
+                   if (manE == null)
+                    {
+                        manE = new ManualExecutor();
+                    }
+                   return manE;
                 case TestTechnology.Sikuli:
-                    return new SikuliExecutor();
+                    if (sikE == null)
+                    {
+                        sikE = new SikuliExecutor();
+                    }
+                    return sikE;
                 case TestTechnology.Sim:
-                    return new SimExecutor();
+                   if (simE == null)
+                    {
+                        simE = new SimExecutor();
+                    }
+                   return simE;
                 case TestTechnology.Writer:
-                    return new WriteExecutor();
+                    if (wrE == null)
+                    {
+                        wrE = new WriteExecutor();
+                    }
+                    return wrE;
                 case TestTechnology.UnitTest:
-                    return new UnitTestExecutor();
+                    if (utE == null)
+                    {
+                        utE = new UnitTestExecutor();
+                    }
+                    return utE;
                 default:
                     throw new InvalidOperationException();
             }

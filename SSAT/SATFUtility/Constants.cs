@@ -21,6 +21,7 @@ namespace SATFUtilities
         public static readonly string PROJECT_DIRECTORY = Directory.GetCurrentDirectory();
         public static readonly string SIKULI_IDE_FULL_PATH = ConfigurationManager.AppSettings["sikuli-ide-path"];
         public static readonly string VS_DEV_CMD_PATH = ConfigurationManager.AppSettings["dev-cmd-path"];
+        public static readonly string ADEXP_SIM_PATH = ConfigurationManager.AppSettings["adexp-sim-path"];
         public static string UnzippedScriptFolderClient
         {
             get

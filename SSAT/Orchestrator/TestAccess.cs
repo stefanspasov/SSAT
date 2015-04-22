@@ -26,17 +26,30 @@ namespace Orchestrator
             Client My_PC = new Client(IPAddress.Loopback, "My PC");
             Step tc1step1 = new Step();
 
-            Operation o_ac1st1 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
-            Operation o_ac2st1 = new Operation("do!", TestTechnology.Human);
-            Operation o_ac3st1 = new Operation("reusableScriptTest2.sikuli", TestTechnology.Sikuli);
+            Operation o1 = new Operation("<start>", TestTechnology.Sim);
+            TestAction ta1 = new TestAction(My_PC, o1, false) { Description = "Start the Sim" };
 
-            TestAction step1action1 = new TestAction(My_PC, o_ac1st1, true) { Description = "Click on the arrow button" };
-            TestAction step1action2 = new TestAction(My_PC, o_ac2st1, false) { Description = o_ac2st1.Directive };
-            TestAction step1action3 = new TestAction(My_PC, o_ac3st1, true) { Description = "Click on the arrow button" };
+            Operation o2 = new Operation("10000^call 0040.txt", TestTechnology.Sim);
+            TestAction ta2 = new TestAction(My_PC, o2, false) { Description = "0040.txt on the sim" };
 
-            tc1step1.Actions.Enqueue(step1action1);
-            tc1step1.Actions.Enqueue(step1action2);
-            tc1step1.Actions.Enqueue(step1action3);
+            Operation o3 = new Operation("<stop>", TestTechnology.Sim);
+            TestAction ta3 = new TestAction(My_PC, o3, false) { Description = "stop the sim" };
+
+            tc1step1.Actions.Enqueue(ta1);
+            tc1step1.Actions.Enqueue(ta2);
+            tc1step1.Actions.Enqueue(ta3);
+
+            //Operation o_ac1st1 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
+            //Operation o_ac2st1 = new Operation("do!", TestTechnology.Human);
+            //Operation o_ac3st1 = new Operation("reusableScriptTest2.sikuli", TestTechnology.Sikuli);
+
+            //TestAction step1action1 = new TestAction(My_PC, o_ac1st1, true) { Description = "Click on the arrow button" };
+            //TestAction step1action2 = new TestAction(My_PC, o_ac2st1, false) { Description = o_ac2st1.Directive };
+            //TestAction step1action3 = new TestAction(My_PC, o_ac3st1, true) { Description = "Click on the arrow button" };
+
+            //tc1step1.Actions.Enqueue(step1action1);
+            //tc1step1.Actions.Enqueue(step1action2);
+            //tc1step1.Actions.Enqueue(step1action3);
 
             testCase.Steps.Enqueue(tc1step1);
             return testCase;
