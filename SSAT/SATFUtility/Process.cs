@@ -7,6 +7,7 @@ using System.IO.Compression;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.ComponentModel;
+using System.Configuration;
 
 namespace SATFUtilities
 {
@@ -25,9 +26,8 @@ namespace SATFUtilities
             procStartInfo.RedirectStandardOutput = true;
             procStartInfo.UseShellExecute = false;
             procStartInfo.CreateNoWindow = true;
-            // TODO: Get admin credentials from config file
-            procStartInfo.UserName = "administrator";
-            procStartInfo.Password = SATFUtilities.Security.MakeSecureString("administrator");
+            procStartInfo.UserName = ConfigurationManager.AppSettings["username"];
+            procStartInfo.Password = SATFUtilities.Security.MakeSecureString(ConfigurationManager.AppSettings["password"]);
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
 
             proc.StartInfo = procStartInfo;
@@ -43,7 +43,6 @@ namespace SATFUtilities
                 proc.Start();
             }
         }
-
 
         public static void CompressFolder(string originFolderPathFull, string destinationFolderPathFull,  bool includeBaseFolder)
         {

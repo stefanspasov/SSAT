@@ -29,5 +29,11 @@ namespace TestEnvironment.Entities
             get { return _passed; }
             set { _passed = value; }
         }
+
+        TestStatus _status;
+        public TestStatus Status {
+            get { return _status; }
+            set { _status = value; }
+        }
     }
 }

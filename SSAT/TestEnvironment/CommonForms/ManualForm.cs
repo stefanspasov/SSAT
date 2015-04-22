@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace TestEnvironment
 {
-   public class ManualForm : Form
+    public class ManualForm : Form
     {
         public string Answer = "";
         public string Comment = "";

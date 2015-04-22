@@ -8,6 +8,6 @@ namespace TestEnvironment.Entities
 {
     public enum TestTechnology
     {
-        Sikuli, Cmd, Sim, Human, Writer
+        Sikuli, Cmd, Sim, Human, Writer, UnitTest
     }
 }

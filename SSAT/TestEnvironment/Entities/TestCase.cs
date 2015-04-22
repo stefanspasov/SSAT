@@ -6,8 +6,20 @@ using System.Threading.Tasks;
 
 namespace TestEnvironment.Entities
 {
+    public enum TestStatus { NotRun, Pending, Running, Passed, Failed }
     public class TestCase
     {
+        string _id;
+        public string Id 
+        {
+            get { return _id; }
+            set { _id = value; }
+        }
+        TestStatus _status;
+        public TestStatus Status {
+            get { return _status; }
+            set { _status = value; }
+        }
         Queue<Step> _steps;
         public Queue<Step> Steps
         {
@@ -28,6 +40,11 @@ namespace TestEnvironment.Entities
         {
             get { return _name; }
             set { _name = value; }
+        }
+        string _response;
+        public string Response {
+            get { return _response; }
+            set { _response = value; }
         }
     }
 }

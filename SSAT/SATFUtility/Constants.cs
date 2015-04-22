@@ -1,15 +1,16 @@
 ﻿using System;
+using System.Configuration;
 using System.IO;
 
 namespace SATFUtilities
 {
     public static class Constants
     {
-        public const int RUN_SCRIPT_PORT = 8888;
-        public const int WRITE_SCRIPT_PORT = 8890;
-        public const int RESULT_SCRIPT_PORT = 8887;
-        public const int CALL_SCRIPT_PORT = 8889;
-        public const int MANUAL_ANSWER_PORT = 8886;
+        public static readonly int RUN_SCRIPT_PORT = Convert.ToInt32(ConfigurationManager.AppSettings["run-script-port"]);
+        public static readonly int WRITE_SCRIPT_PORT = Convert.ToInt32(ConfigurationManager.AppSettings["write-script-port"]);
+        public static readonly int RESULT_SCRIPT_PORT = Convert.ToInt32(ConfigurationManager.AppSettings["result-script-port"]);
+        public static readonly int CALL_SCRIPT_PORT = Convert.ToInt32(ConfigurationManager.AppSettings["call-script-port"]);
+        public static readonly int MANUAL_ANSWER_PORT = Convert.ToInt32(ConfigurationManager.AppSettings["manual-script-port"]);
         public const string FILENAME_RECEIVED_MSG = "FILENAME_RECEIVED";
         public const string FILE_RECEIVED_MSG = "FILE_RECEIVED";
         private const string UNZIPPED_SCRIPTS_FOLDER_CLIENT = "Scripts";
@@ -17,8 +18,9 @@ namespace SATFUtilities
         private const string ZIPPED_SCRIPTS_FOLDER = "ScriptsZips";
         public const string PYTHON_SERVER_NAME = "sikuli-server.sikuli";
         public const string SETUP_FOLDER = "Setup";
-        public static string PROJECT_DIRECTORY = Directory.GetCurrentDirectory();
-        public const string SIKULI_IDE_FULL_PATH = "C:\\sikuli\\runIDE.cmd";// TODO
+        public static readonly string PROJECT_DIRECTORY = Directory.GetCurrentDirectory();
+        public static readonly string SIKULI_IDE_FULL_PATH = ConfigurationManager.AppSettings["sikuli-ide-path"];
+        public static readonly string VS_DEV_CMD_PATH = ConfigurationManager.AppSettings["dev-cmd-path"];
         public static string UnzippedScriptFolderClient
         {
             get
@@ -40,7 +42,6 @@ namespace SATFUtilities
                 return Path.Combine(PROJECT_DIRECTORY, Constants.ZIPPED_SCRIPTS_FOLDER);
             }
         }
-
         public static string SetupFolder
         {
             get

@@ -30,14 +30,11 @@ namespace TestEnvironment.Organizers
                 case TestTechnology.Sikuli:
                     return new SikuliOrganizer();
                 case TestTechnology.Cmd:
-                    
                 case TestTechnology.Sim:
-                    
                 case TestTechnology.Writer:
-
                 case TestTechnology.Human:
+                case TestTechnology.UnitTest:
                     return null;
-                   
                 default:
                     throw new InvalidOperationException();
             }

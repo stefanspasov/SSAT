@@ -21,7 +21,6 @@ namespace TestEnvironment.Executors
         }
         public IExecutor CreateExecutor(TestTechnology executorType)
         {
-           // Executor value = (Executor) Enum.Parse(typeof(Executor), executorType);
             switch (executorType)
             {
                 case TestTechnology.Cmd:
@@ -34,6 +33,8 @@ namespace TestEnvironment.Executors
                     return new SimExecutor();
                 case TestTechnology.Writer:
                     return new WriteExecutor();
+                case TestTechnology.UnitTest:
+                    return new UnitTestExecutor();
                 default:
                     throw new InvalidOperationException();
             }
