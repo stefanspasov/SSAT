@@ -6,18 +6,19 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using TestEnvironment.Entities;
 
 namespace TestEnvironment.Executors {
     public class UnitTestExecutor : IExecutor {
         public string Execute(string source) {
             var utInfo = JsonConvert.DeserializeObject<UnitTestInfo>(source);
-            var resultFileName = RunUnitTest(Constants.VS_DEV_CMD_PATH, utInfo);
-            return File.ReadAllText(Path.Combine(utInfo.WorkingDirectory, resultFileName));
+            return JsonConvert.SerializeObject(RunUnitTest(Constants.VS_DEV_CMD_PATH, utInfo));
         }
 
-        public static string RunUnitTest(string vsDevPath, UnitTestInfo utInfo) {
+        public static UnitTestResult RunUnitTest(string vsDevPath, UnitTestInfo utInfo) {
             var procStartInfo = new ProcessStartInfo("cmd", "/c %comspec% /k \"" + vsDevPath + "\"");
             procStartInfo.RedirectStandardInput = true;
             procStartInfo.RedirectStandardOutput = true;
@@ -38,9 +39,19 @@ namespace TestEnvironment.Executors {
             var proc = System.Diagnostics.Process.Start(procStartInfo);
             proc.StandardInput.WriteLine(cmd);
             proc.StandardInput.WriteLine();
-            var x = proc.StandardOutput.ReadLine();
+
+            var resultFile = Path.Combine(utInfo.WorkingDirectory, resultFileName);
+            while (!proc.HasExited && !File.Exists(resultFile)) {
+                Thread.Sleep(200);
+            }
             proc.Close();
-            return resultFileName;
+
+            var serializer = new XmlSerializer(typeof(UnitTestResult));
+            StreamReader reader = new StreamReader(resultFile);
+            UnitTestResult result = (UnitTestResult) serializer.Deserialize(reader);
+            reader.Close();
+
+            return result;
         }
     }
 }

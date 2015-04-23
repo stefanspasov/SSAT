@@ -53,6 +53,7 @@
     <Compile Include="Entities\TestAction.cs" />
     <Compile Include="Entities\TestCase.cs" />
     <Compile Include="Entities\UnitTestInfo.cs" />
+    <Compile Include="Entities\UnitTestResult.cs" />
     <Compile Include="Environment.cs" />
     <Compile Include="Entities\Operation.cs" />
     <Compile Include="Executors\UnitTestExecutor.cs" />

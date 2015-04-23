@@ -50,6 +50,10 @@ namespace Orchestrator
         {
             _testCases = new TestAccess().LoadTestCases();
 
+            _testResultLb.Text = "Tests run (0/0) — Tests passed (0/0)";
+            _resTb.Text = _descTb.Text = string.Empty;
+            _stepTv.Nodes.Clear();
+
             _testTv.BeginUpdate();
             _testTv.Nodes.Clear();
             _testNodeDict.Clear();
