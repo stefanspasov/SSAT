@@ -15,7 +15,6 @@ namespace TestEnvironment.Entities
         Client _targetClient;
         Operation _operation;
         string _response;
-        bool _passed;
         string _file;
         FileState _fileState;
 
@@ -30,7 +29,6 @@ namespace TestEnvironment.Entities
             get { return _file; }
             set { _file = value; _fileState = FileState.NotReady; }
         } 
-
 
         public string Description
         {
@@ -56,10 +54,10 @@ namespace TestEnvironment.Entities
             set { _response = value; }
         }
 
-        public bool Passed
-        {
-            get { return _passed; }
-            set { _passed = value; }
+        TestStatus _status;
+        public TestStatus Status {
+            get { return _status; }
+            set { _status = value; }
         }
 
         public TestAction(Client client, Operation operation, bool isThereAFile)

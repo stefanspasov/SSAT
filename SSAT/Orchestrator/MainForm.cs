@@ -42,6 +42,10 @@ namespace Orchestrator
             _testTv.ImageList.Images.Add("pause", Image.FromFile("Resources/Images/pause.png"));
         }
 
+        private void OnLoaded(object sender, EventArgs e) {
+            LoadTestCases();
+        }
+
         private void LoadTestCases()
         {
             _testCases = new TestAccess().LoadTestCases();
@@ -66,7 +70,9 @@ namespace Orchestrator
         {
             if (_bw.IsBusy != true) {
                 ResetTestCaseStatuses();
-                _pb.Style = ProgressBarStyle.Marquee;
+                _pb.Value = 0;
+                _cancelBt.Enabled = true;
+                _reloadBt.Enabled = _runBt.Enabled = false;
                 _bw.RunWorkerAsync();
             }
         }
@@ -74,13 +80,11 @@ namespace Orchestrator
         private void OnBtnCancelClicked(object sender, EventArgs e) {
             if (_bw.WorkerSupportsCancellation == true) {
                 _bw.CancelAsync();
-                _pb.Style = ProgressBarStyle.Blocks;
             }
         }
 
         private void RunTestCase(TestCase testCase, BackgroundWorker worker, DoWorkEventArgs e)
         {
-            _runningTestCase = testCase;
             testCase.Status = TestStatus.Running;
             worker.ReportProgress(1, testCase.Id);
 
@@ -123,19 +127,26 @@ namespace Orchestrator
                         {
                             currentAction.Response = Connectivity.GetData(clientSocket);
                         }
-                        Console.WriteLine(currentAction.Response);
-                        
-                        // TODO check failed/passed steps
-                        testCase.Response = currentAction.Response;
-                        if (currentAction.Response.Contains("failed")) {
-                            testCase.Status = TestStatus.Failed;
-                            worker.ReportProgress(1, testCase.Id);
-                            return;
-                        }
                         
                         clientSocket.Close();
 
-                        worker.ReportProgress(1, testCase.Id);
+                        // Save responses to the test and the action
+                        // Break the operation if the action is failed.
+                        testCase.Response += 
+                            string.Format("{0} @ {1} : {2}\r\nAction: {3}\r\nResponse: {4}\r\n", 
+                                          DateTime.Now, currentAction.TargetClient.Name, 
+                                          currentAction.TargetClient.IpAddress, currentAction.Description, 
+                                          string.IsNullOrEmpty(currentAction.Response) ? "<no response>" : currentAction.Response);
+                        // TODO This is the temporary check for failed actions and should be changed
+                        if (currentAction.Response.Contains("failed")) {
+                            currentAction.Status = TestStatus.Failed;
+                            testCase.Status = TestStatus.Failed;
+                            worker.ReportProgress(1, testCase.Id);
+                            return;
+                        } else {
+                            currentAction.Status = TestStatus.Passed;
+                            worker.ReportProgress(1, testCase.Id);
+                        }
                     }
                 }
             }
@@ -178,7 +189,12 @@ namespace Orchestrator
                     _stepTv.Nodes.Clear();
                     _stepTv.Nodes.AddRange(
                         _selectedTestCase.Steps.SelectMany(s => s.Actions)
-                                         .Select(a => new TreeNode(a.Description, 2, 2) { Tag = a }).ToArray());
+                                         .Select(a => new TreeNode(a.Description) { 
+                                                          Tag = a, 
+                                                          ImageKey = GetImgKey(a.Status),
+                                                          SelectedImageKey = GetImgKey(a.Status)
+                                                      })
+                                         .ToArray());
                     _stepTv.EndUpdate();
                 }
             }
@@ -194,6 +210,9 @@ namespace Orchestrator
                     testCase.Status = TestStatus.NotRun;
                 }
                 _testNodeDict[testCase].ImageKey = _testNodeDict[testCase].SelectedImageKey = GetImgKey(testCase.Status);
+                // Reset actions' statuses also
+                testCase.Steps.SelectMany(s => s.Actions).ToList()
+                    .ForEach(a => { a.Status = TestStatus.NotRun; a.Response = string.Empty; });
             }
             _testTv.EndUpdate();
         }
@@ -208,29 +227,44 @@ namespace Orchestrator
                     e.Cancel = true;
                     break;
                 } else {
+                    _runningTestCase = testCase;
                     RunTestCase(testCase, worker, e);
                 }
             }
         }
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
+            _cancelBt.Enabled = false;
+            _reloadBt.Enabled = _runBt.Enabled = true;
+            _testResultLb.Text =
+                string.Format("Tests run ({0}/{1}) — Tests passed ({2}/{0}) ",
+                    _testCases.Count(t => t.Status != TestStatus.NotRun), _testCases.Count,
+                    _testCases.Count(t => t.Status == TestStatus.Passed));
             if ((e.Cancelled == true)) {
-                //this.tbProgress.Text = "Canceled!";
+                _testResultLb.Text += "— The tests have been cancelled"; 
             } else if (!(e.Error == null)) {
-                //this.tbProgress.Text = ("Error: " + e.Error.Message);
-            } else {
-                //this.tbProgress.Text = "Done!";
+                _testResultLb.Text += "— Some errors occurred during the execution"; 
             }
-            _pb.Style = ProgressBarStyle.Blocks;
+            _pb.Value = 100;
         }
 
         private void bw_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-            var testCase = _testCases.First(t => t.Id == e.UserState);
+            if (!_testCases.Any(t => t.Status != TestStatus.NotRun)) return;
+            var testCase = _testCases.FirstOrDefault(t => t.Id == e.UserState);
+            if (testCase == null) return;
             _testNodeDict[testCase].ImageKey = _testNodeDict[testCase].SelectedImageKey = GetImgKey(testCase.Status);
             if (_selectedTestCase == _runningTestCase) {
                 _resTb.Text = testCase.Response;
+                foreach (TreeNode node in _stepTv.Nodes) {
+                    var action = node.Tag as TestAction;
+                    if (action != null) {
+                        node.ImageKey = node.SelectedImageKey = GetImgKey(action.Status);
+                    }
+                }
             }
-            //this.tbProgress.Text = (e.ProgressPercentage.ToString() + "%");
+            // TODO Granularize the progress to steps
+            _pb.Value = _testCases.Count(t => t.Status == TestStatus.Passed || t.Status == TestStatus.Failed) * 100
+                      / _testCases.Count(t => t.Status != TestStatus.NotRun);
         }
 
         private static string GetImgKey(TestStatus status) {

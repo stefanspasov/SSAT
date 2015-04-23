@@ -63,17 +63,22 @@ namespace Client
             }
         }
 
-        public static void StartFacade()
-        {
+        public static void StartFacade() {
             TcpListener listener = new TcpListener(Constants.RUN_SCRIPT_PORT);
             listener.Start();
-            while (true)
-            {
+            while (true) {
                 var client = listener.AcceptTcpClient();
-                var operationStr = Connectivity.GetData(client);
-                var operation = JsonConvert.DeserializeObject<Operation>(operationStr);
-                IExecutor executor = ExecutorFactory.Instance().CreateExecutor(operation.Executor);
-                Connectivity.SendData(client, executor.Execute(operation.Directive));
+                string response;
+                try {
+                    var operationStr = Connectivity.GetData(client);
+                    var operation = JsonConvert.DeserializeObject<Operation>(operationStr);
+                    IExecutor executor = ExecutorFactory.Instance().CreateExecutor(operation.Executor);
+                    response = executor.Execute(operation.Directive);
+                } catch (Exception ex) {
+                    response = "The step has been failed with the following exception:\r\n"
+                               + ex.Message + "\r\nStack Trace:\r\n" + ex.StackTrace;
+                }
+                Connectivity.SendData(client, response);
                 client.Close();
             }
         }

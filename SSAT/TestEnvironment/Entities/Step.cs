@@ -15,7 +15,6 @@ namespace TestEnvironment.Entities
             get { if (_actions == null) _actions = new Queue<TestAction>();  return _actions; }
         }
 
-        bool _passed;
         String _response;
 
         public String Response
@@ -26,14 +25,7 @@ namespace TestEnvironment.Entities
 
         public bool Passed
         {
-            get { return _passed; }
-            set { _passed = value; }
-        }
-
-        TestStatus _status;
-        public TestStatus Status {
-            get { return _status; }
-            set { _status = value; }
+            get { return Actions.All(a => a.Status == TestStatus.Passed); }
         }
     }
 }

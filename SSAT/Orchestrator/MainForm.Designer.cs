@@ -77,10 +77,12 @@
             // 
             // _resTb
             // 
-            this._resTb.Location = new System.Drawing.Point(3, 294);
+            this._resTb.Location = new System.Drawing.Point(3, 234);
             this._resTb.Multiline = true;
             this._resTb.Name = "_resTb";
-            this._resTb.Size = new System.Drawing.Size(449, 99);
+            this._resTb.ReadOnly = true;
+            this._resTb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this._resTb.Size = new System.Drawing.Size(449, 159);
             this._resTb.TabIndex = 7;
             // 
             // splitContainer1
@@ -126,11 +128,12 @@
             // 
             this._stepTv.Location = new System.Drawing.Point(3, 70);
             this._stepTv.Name = "_stepTv";
-            this._stepTv.Size = new System.Drawing.Size(449, 218);
+            this._stepTv.Size = new System.Drawing.Size(449, 158);
             this._stepTv.TabIndex = 8;
             // 
             // _cancelBt
             // 
+            this._cancelBt.Enabled = false;
             this._cancelBt.Location = new System.Drawing.Point(93, 13);
             this._cancelBt.Name = "_cancelBt";
             this._cancelBt.Size = new System.Drawing.Size(75, 23);
@@ -144,6 +147,7 @@
             this._pb.Location = new System.Drawing.Point(12, 43);
             this._pb.Name = "_pb";
             this._pb.Size = new System.Drawing.Size(772, 23);
+            this._pb.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this._pb.TabIndex = 10;
             // 
             // label1
@@ -160,9 +164,9 @@
             this._testResultLb.AutoSize = true;
             this._testResultLb.Location = new System.Drawing.Point(84, 77);
             this._testResultLb.Name = "_testResultLb";
-            this._testResultLb.Size = new System.Drawing.Size(172, 13);
+            this._testResultLb.Size = new System.Drawing.Size(178, 13);
             this._testResultLb.TabIndex = 12;
-            this._testResultLb.Text = "Tests run - 0/0. Tests passed - 0/0";
+            this._testResultLb.Text = "Tests run (0/0) — Tests passed (0/0)";
             // 
             // MainForm
             // 
@@ -179,6 +183,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Name = "MainForm";
             this.Text = "Orchestrator";
+            this.Load += new System.EventHandler(this.OnLoaded);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.Panel2.PerformLayout();
