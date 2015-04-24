@@ -36,7 +36,7 @@ namespace Client
             Process.HandlerRoutine hr = new Process.HandlerRoutine(ConsoleCtrlCheck);
             GC.KeepAlive(hr);
             Process.SetConsoleCtrlHandler(hr, true);
-          //  Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));  
+            Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));  
             Thread writeScriptThread = new Thread(new ThreadStart(() => WriteScriptThreadHandler(Constants.WRITE_SCRIPT_PORT)));
             writeScriptThread.Start(); 
             StartFacade();

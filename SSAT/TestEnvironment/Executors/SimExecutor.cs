@@ -27,9 +27,9 @@ namespace TestEnvironment.Executors
                 SimProcess = System.Diagnostics.Process.Start(pi);
                 streamWriter = SimProcess.StandardInput;
                 streamWriter.WriteLine("call adexp_setup.txt");
-                System.Threading.Thread.Sleep(10000);
-                streamWriter.WriteLine("stop_wait");
-                System.Threading.Thread.Sleep(2000);
+                System.Threading.Thread.Sleep(7000);
+             //   streamWriter.WriteLine("stop_wait");
+             //   System.Threading.Thread.Sleep(2000);
                 //SimProcess.WaitForExit();
                 started = true;
                 return "sim started";
@@ -47,8 +47,8 @@ namespace TestEnvironment.Executors
             {
                 streamWriter.WriteLine(source.Split('^')[1]);
                 System.Threading.Thread.Sleep(Int32.Parse(source.Split('^')[0]));
-                streamWriter.WriteLine("stop_wait");
-                System.Threading.Thread.Sleep(2000);
+            //    streamWriter.WriteLine("stop_wait");
+             //   System.Threading.Thread.Sleep(2000);
                 return "done";
             }
             return "sim not started | failed";

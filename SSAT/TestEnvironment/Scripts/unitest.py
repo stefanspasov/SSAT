@@ -1,10 +1,10 @@
 import socket
 from sikuli import *
-def assertExists(img, step, port):
+def assertExists(img):
   if(exists(img)):
-    send("STEP:" + step + ":passed") 
+    send("passed") 
   else:
-    send("STEP:" + step + ":failed")
+    send("failed")
     
 def send(MESSAGE):
     TCP_IP = '127.0.0.1'

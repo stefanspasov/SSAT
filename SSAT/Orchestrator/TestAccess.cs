@@ -29,15 +29,20 @@ namespace Orchestrator
             Operation o1 = new Operation("<start>", TestTechnology.Sim);
             TestAction ta1 = new TestAction(My_PC, o1, false) { Description = "Start the Sim" };
 
-            Operation o2 = new Operation("10000^call 0040.txt", TestTechnology.Sim);
-            TestAction ta2 = new TestAction(My_PC, o2, false) { Description = "0040.txt on the sim" };
+            Operation o2 = new Operation("7000^call 0056.txt", TestTechnology.Sim);
+            TestAction ta2 = new TestAction(My_PC, o2, false) { Description = "0056.txt on the sim" };
 
             Operation o3 = new Operation("<stop>", TestTechnology.Sim);
             TestAction ta3 = new TestAction(My_PC, o3, false) { Description = "stop the sim" };
 
+            //Operation o4 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
+            Operation o4 = new Operation("t_estr_41_r1.sikuli", TestTechnology.Sikuli);
+            TestAction ta4 = new TestAction(My_PC, o4, true) { Description = "Five departures and an arrival appear on the strip board." };
+
             tc1step1.Actions.Enqueue(ta1);
             tc1step1.Actions.Enqueue(ta2);
             tc1step1.Actions.Enqueue(ta3);
+            tc1step1.Actions.Enqueue(ta4);
 
             //Operation o_ac1st1 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
             //Operation o_ac2st1 = new Operation("do!", TestTechnology.Human);
