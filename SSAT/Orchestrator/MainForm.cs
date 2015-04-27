@@ -257,7 +257,7 @@ namespace Orchestrator
             var testCase = _testCases.FirstOrDefault(t => t.Id == e.UserState);
             if (testCase == null) return;
             _testNodeDict[testCase].ImageKey = _testNodeDict[testCase].SelectedImageKey = GetImgKey(testCase.Status);
-            if (_selectedTestCase == _runningTestCase) {
+            if (_selectedTestCase == testCase) {
                 _resTb.Text = testCase.Response;
                 foreach (TreeNode node in _stepTv.Nodes) {
                     var action = node.Tag as TestAction;

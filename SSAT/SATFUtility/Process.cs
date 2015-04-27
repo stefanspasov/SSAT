@@ -16,8 +16,17 @@ namespace SATFUtilities
 
         public static void StartSikuliServer(string serverFullPath)
         {
-           string command = Constants.SIKULI_IDE_FULL_PATH + " -r \"" + serverFullPath + "\"";
-           StartProcessAsAdmin(command);
+            try
+            {
+                Console.WriteLine("Starting Sikuli server...");
+                string command = Constants.SIKULI_IDE_FULL_PATH + " -r \"" + serverFullPath + "\"";
+                StartProcessAsAdmin(command);
+                Console.WriteLine("Sikuli server started.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Fail to start Sikuli server. Unexpected behaviors might occur.\r\n" + ex.Message + "\n\nStack Trace:\n" + ex.StackTrace);
+            }
         }
 
         public static void StartProcessAsAdmin(String command)
@@ -37,6 +46,9 @@ namespace SATFUtilities
             }
             catch (Win32Exception)
             {
+                Console.WriteLine(
+                    string.Format("Fail to start Sikuli server with Administrator credentials: username={0} and password={1}\r\nTry using the current account...", 
+                                  procStartInfo.UserName, procStartInfo.Password));
                 // Fallback to the current account
                 procStartInfo.UserName = string.Empty;
                 procStartInfo.Password = null;
@@ -96,15 +108,3 @@ namespace SATFUtilities
         }
     }
 }
-
-
-
-//public static void Write(string zipFile)
-//{
-//    string mainScriptPath = _projectDirectory + @"\Scripts\mainScript.sikuli\mainScript.py";
-//    FileStream fs = new FileStream(mainScriptPath, FileMode.Append, FileAccess.Write);
-//    string data = "import " + zipFile + Environment.NewLine;
-//    byte[] writeStreamBuffer = System.Text.Encoding.ASCII.GetBytes(data);
-//    fs.Write(writeStreamBuffer, 0, (int)writeStreamBuffer.Length);
-//    fs.Close();
-//}

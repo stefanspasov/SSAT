@@ -33,13 +33,20 @@ namespace Client
 
         static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
             Process.HandlerRoutine hr = new Process.HandlerRoutine(ConsoleCtrlCheck);
             GC.KeepAlive(hr);
             Process.SetConsoleCtrlHandler(hr, true);
-            Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));  
+            Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));
             Thread writeScriptThread = new Thread(new ThreadStart(() => WriteScriptThreadHandler(Constants.WRITE_SCRIPT_PORT)));
-            writeScriptThread.Start(); 
+            writeScriptThread.Start();
             StartFacade();
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            AppException.Handle(e.ExceptionObject as Exception);
         }
 
         public static void WriteScriptThreadHandler(int listeningPort)
@@ -53,12 +60,14 @@ namespace Client
             {
                 clientSocket = listener.AcceptTcpClient();
                 String scriptName = Connectivity.GetData(clientSocket);
+                Console.WriteLine("Receiving file: " + scriptName);
                 Connectivity.SendData(clientSocket, Constants.FILENAME_RECEIVED_MSG);
                 Connectivity.GetFile(clientSocket, scriptName);
                 clientSocket.Close();
                 clientSocketResult = listener.AcceptTcpClient();
                 Process.DecompressFile(Path.Combine(Constants.ZippedScriptFolder, scriptName),  Constants.UnzippedScriptFolderClient);
                 Connectivity.SendData(clientSocketResult, Constants.FILE_RECEIVED_MSG);
+                Console.WriteLine("File received: " + scriptName);
                 clientSocketResult.Close();
             }
         }
@@ -71,11 +80,13 @@ namespace Client
                 string response;
                 try {
                     var operationStr = Connectivity.GetData(client);
+                    Console.WriteLine("Executing operation: " + operationStr);
                     var operation = JsonConvert.DeserializeObject<Operation>(operationStr);
                     IExecutor executor = ExecutorFactory.Instance().CreateExecutor(operation.Executor);
                     response = executor.Execute(operation.Directive);
+                    Console.WriteLine("Operation executed: " + operationStr);
                 } catch (Exception ex) {
-                    response = "The step has been failed with the following exception:\r\n"
+                    response = "The operation has been failed with the following exception:\r\n"
                                + ex.Message + "\r\nStack Trace:\r\n" + ex.StackTrace;
                 }
                 Connectivity.SendData(client, response);
