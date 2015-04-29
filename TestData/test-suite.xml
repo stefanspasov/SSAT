@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <TestSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <TestCases>
-    <TestCase Id="1563662727" Description="Verifies the specifications for the input devices (Pen, software keyboard and software keypad)" Name="t_esc_1 Check menu display">
+    <TestCase Id="131586287" Description="Verifies the specifications for the input devices (Pen, software keyboard and software keypad)" Name="t_esc_1 Check menu display">
       <Steps>
         <Step>
           <Actions>
@@ -13,12 +13,64 @@
               <Operation Directive="7000^call 0056.txt" Executor="Sim" />
               <TargetClient Name="ESTRIP_1" />
             </TestAction>
-            <TestAction Description="stop the sim">
+            <TestAction Description="Stop the sim" HasFile="false">
               <Operation Directive="&lt;stop&gt;" Executor="Sim" />
               <TargetClient Name="ESTRIP_1" />
             </TestAction>
             <TestAction Description="Five departures and an arrival appear on the strip board." HasFile="true">
               <Operation Directive="t_estr_41_r1.sikuli" Executor="Sikuli" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Right click the action menu" HasFile="true">
+              <Operation Directive="t_estr_41_a3.sikuli" Executor="Sikuli" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+          </Actions>
+        </Step>
+      </Steps>
+    </TestCase>
+    <TestCase Id="131586287" Description="Tests that flights disappear if they are delayed beyond the activation time threshold." Name="t_estr_103">
+      <Steps>
+        <Step>
+          <Actions>
+            <TestAction Description="Run 0157.txt" HasFile="false">
+              <Operation Directive="call 0157.txt" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Check for DEP 1 - 4" HasFile="true">
+              <Operation Directive="reusableScriptTest1.sikuli" Executor="Sikuli" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Assume DEP002" HasFile="true">
+              <Operation Directive="reusableScriptTest1.sikuli" Executor="Sikuli" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Continue with the simulator scanario" HasFile="false">
+              <Operation Directive="go" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="All strips have EOBT delayed 10 minutes." HasFile="false">
+              <Operation Directive="All strips have EOBT delayed 10 minutes. DEP001 disappears." Executor="Human" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Continue with the simulator scanario" HasFile="false">
+              <Operation Directive="go" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="All strips have EOBT delayed 10 minutes." HasFile="false">
+              <Operation Directive="All strips have EOBT delayed 10 minutes. DEP002 does not disappear, even though it has an EOBT further than activation time in the future." Executor="Human" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Continue with the simulator scanario" HasFile="false">
+              <Operation Directive="go" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Stop the sim" HasFile="false">
+              <Operation Directive="&lt;stop&gt;" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="DEP001 appears within 1 min" HasFile="true">
+              <Operation Directive="reusableScriptTest1.sikuli" Executor="Sikuli" />
               <TargetClient Name="ESTRIP_1" />
             </TestAction>
           </Actions>
