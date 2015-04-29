@@ -52,6 +52,7 @@
     <Compile Include="Entities\Step.cs" />
     <Compile Include="Entities\TestAction.cs" />
     <Compile Include="Entities\TestCase.cs" />
+    <Compile Include="Entities\TestSuite.cs" />
     <Compile Include="Entities\UnitTestInfo.cs" />
     <Compile Include="Entities\UnitTestResult.cs" />
     <Compile Include="Environment.cs" />

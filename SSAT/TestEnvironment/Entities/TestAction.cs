@@ -4,32 +4,31 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using TestEnvironment;
 
 namespace TestEnvironment.Entities
 {
-   public class TestAction
+    [Serializable]
+    public class TestAction
     {
-
         string _description;
         Client _targetClient;
         Operation _operation;
         string _response;
-        string _file;
-        FileState _fileState;
-
+        FileState _fileState = FileState.NoFile;
+        [XmlIgnore]
         public FileState FileState
         {
             get { return _fileState; }
             set { _fileState = value; }
         }
-
+        [XmlIgnore]
         public string File
         {
-            get { return _file; }
-            set { _file = value; _fileState = FileState.NotReady; }
-        } 
-
+            get { return _hasFile ? _operation.Directive : null; }
+        }
+        [XmlAttribute]
         public string Description
         {
             get { return _description; }
@@ -47,7 +46,7 @@ namespace TestEnvironment.Entities
             get { return _targetClient; }
             set { _targetClient = value; }
         }
-
+        [XmlIgnore]
         public string Response
         {
             get { return _response; }
@@ -55,29 +54,26 @@ namespace TestEnvironment.Entities
         }
 
         TestStatus _status;
+        [XmlIgnore]
         public TestStatus Status {
             get { return _status; }
             set { _status = value; }
         }
 
-        public TestAction(Client client, Operation operation, bool isThereAFile)
-        {
-            _operation = operation;
-            _targetClient = client;
-            if (isThereAFile)
-            {
-                _fileState = FileState.NotReady;
-                _file = operation.Directive;
-            }
-            else
-            {
-                _fileState = FileState.NoFile;
+        private bool _hasFile;
+        [XmlAttribute]
+        public bool HasFile {
+            get { return _hasFile; }
+            set { 
+                _hasFile = value;
+                _fileState = _hasFile ? FileState.NotReady : FileState.NoFile;
             }
         }
+        public TestAction() { }
     }
 
     public enum FileState
     {
-      NotReady, NoFile, Ready
+        NotReady, NoFile, Ready
     }
 }

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TestSuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TestCases>
+    <TestCase Id="1563662727" Description="Verifies the specifications for the input devices (Pen, software keyboard and software keypad)" Name="t_esc_1 Check menu display">
+      <Steps>
+        <Step>
+          <Actions>
+            <TestAction Description="Start the Sim" HasFile="false">
+              <Operation Directive="&lt;start&gt;" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="0056.txt on the sim" HasFile="false">
+              <Operation Directive="7000^call 0056.txt" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="stop the sim">
+              <Operation Directive="&lt;stop&gt;" Executor="Sim" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+            <TestAction Description="Five departures and an arrival appear on the strip board." HasFile="true">
+              <Operation Directive="t_estr_41_r1.sikuli" Executor="Sikuli" />
+              <TargetClient Name="ESTRIP_1" />
+            </TestAction>
+          </Actions>
+        </Step>
+      </Steps>
+    </TestCase>
+  </TestCases>
+</TestSuite>

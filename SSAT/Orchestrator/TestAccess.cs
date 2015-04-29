@@ -1,10 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text;
-using System.Threading.Tasks;
+using System.Xml.Serialization;
 using TestEnvironment.Entities;
 
 namespace Orchestrator
@@ -13,88 +14,19 @@ namespace Orchestrator
     {
         public IList<TestCase> LoadTestCases()
         {
-            return new List<TestCase>() { CreateFakeTestCase1(), CreateFakeTestCase2() };
-        }
+            var serializer = new XmlSerializer(typeof(TestSuite));
+            // TODO: locate the test-suite file using OpenFileDialog
+            var ts = (TestSuite) serializer.Deserialize(new StreamReader("test-suite.xml"));
 
-        private TestCase CreateFakeTestCase1()
-        {
-            TestCase testCase = new TestCase() { 
-                Id = new Random().Next().ToString(),
-                Name = "t_esc_1 Check menu display",
-                Description = "Verifies the specifications for the input devices (Pen, software keyboard and software keypad)"
-            };
-            Client My_PC = new Client(IPAddress.Loopback, "My PC");
-            Step tc1step1 = new Step();
-
-            Operation o1 = new Operation("<start>", TestTechnology.Sim);
-            TestAction ta1 = new TestAction(My_PC, o1, false) { Description = "Start the Sim" };
-
-            Operation o2 = new Operation("7000^call 0056.txt", TestTechnology.Sim);
-            TestAction ta2 = new TestAction(My_PC, o2, false) { Description = "0056.txt on the sim" };
-
-            Operation o3 = new Operation("<stop>", TestTechnology.Sim);
-            TestAction ta3 = new TestAction(My_PC, o3, false) { Description = "stop the sim" };
-
-            //Operation o4 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
-            Operation o4 = new Operation("t_estr_41_r1.sikuli", TestTechnology.Sikuli);
-            TestAction ta4 = new TestAction(My_PC, o4, true) { Description = "Five departures and an arrival appear on the strip board." };
-
-            tc1step1.Actions.Enqueue(ta1);
-            tc1step1.Actions.Enqueue(ta2);
-            tc1step1.Actions.Enqueue(ta3);
-            tc1step1.Actions.Enqueue(ta4);
-
-            //Operation o_ac1st1 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
-            //Operation o_ac2st1 = new Operation("do!", TestTechnology.Human);
-            //Operation o_ac3st1 = new Operation("reusableScriptTest2.sikuli", TestTechnology.Sikuli);
-
-            //TestAction step1action1 = new TestAction(My_PC, o_ac1st1, true) { Description = "Click on the arrow button" };
-            //TestAction step1action2 = new TestAction(My_PC, o_ac2st1, false) { Description = o_ac2st1.Directive };
-            //TestAction step1action3 = new TestAction(My_PC, o_ac3st1, true) { Description = "Click on the arrow button" };
-
-            //tc1step1.Actions.Enqueue(step1action1);
-            //tc1step1.Actions.Enqueue(step1action2);
-            //tc1step1.Actions.Enqueue(step1action3);
-
-            testCase.Steps.Enqueue(tc1step1);
-            return testCase;
-        }
-
-        private TestCase CreateFakeTestCase2() {
-            TestCase testCase = new TestCase() {
-                Id = new Random().Next().ToString(),
-                Name = "t_esc_2 Test test test",
-                Description = "Verifies the specifications for the input devices (Pen, software keyboard and software keypad)"
-            };
-            Client My_PC = new Client(IPAddress.Loopback, "My PC");
-            Step tc1step1 = new Step();
-
-            Operation o_ac1st1 = new Operation("reusableScriptTest1.sikuli", TestTechnology.Sikuli);
-            Operation o_ac2st1 = new Operation("do!", TestTechnology.Human);
-            Operation o_ac3st1 = new Operation("reusableScriptTest2.sikuli", TestTechnology.Sikuli);
-
-            TestAction step1action1 = new TestAction(My_PC, o_ac1st1, true) { Description = "Click on the arrow button" };
-            TestAction step1action2 = new TestAction(My_PC, o_ac2st1, false) { Description = o_ac2st1.Directive };
-            TestAction step1action3 = new TestAction(My_PC, o_ac3st1, true) { Description = "Click on the arrow button" };
-
-            tc1step1.Actions.Enqueue(step1action1);
-            tc1step1.Actions.Enqueue(step1action2);
-            tc1step1.Actions.Enqueue(step1action3);
-
-            // Step 2
-            Step tc1step2 = new Step();
-            var utInfo = new UnitTestInfo() {
-                Tests = new List<string> { "TestHeapSort" },
-                AssemblyName = "CrackingInterviewTest",
-                WorkingDirectory = "C:/Temp"
-            };
-            Operation o_ac1st2 = new Operation(JsonConvert.SerializeObject(utInfo), TestTechnology.UnitTest);
-            TestAction step2action1 = new TestAction(My_PC, o_ac1st2, false) { Description = "Run all unit tests" };
-            tc1step2.Actions.Enqueue(step2action1);
-
-            testCase.Steps.Enqueue(tc1step2);
-            testCase.Steps.Enqueue(tc1step1);
-            return testCase;
+            // Get clients' locations based on their names
+            var clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
+            if (clientCollection != null) {
+                foreach (var client in ts.TestCases.SelectMany(t => t.Steps).SelectMany(s => s.Actions).Select(a => a.TargetClient)) {
+                    client.IpAddress = IPAddress.Parse(clientCollection[client.Name]);
+                }
+            }
+            
+            return ts.TestCases;
         }
     }
 }
