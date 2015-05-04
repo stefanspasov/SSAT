@@ -24,7 +24,6 @@ namespace Orchestrator
         private IList<TestCase> _testCases = new List<TestCase>();
         private TestCase _selectedTestCase;
         private TestCase _runningTestCase;
-        private string _formResult = string.Empty;
         private BackgroundWorker _bw = new BackgroundWorker();
         private Dictionary<TestCase, TreeNode> _testNodeDict = new Dictionary<TestCase, TreeNode>();
         public MainForm()
@@ -118,17 +117,15 @@ namespace Orchestrator
                         Connectivity.SendData(clientSocket, JsonConvert.SerializeObject(currentAction.Operation));
                         if (currentAction.Operation.Executor == TestTechnology.Human)
                         {
-                            ManualForm formManual = new ManualForm() { Text = "Orchestrator", Instruction = currentAction.Operation.Directive };
-                            Thread LThread = new Thread(new ThreadStart(() => LocalMessageHandler(formManual, currentAction.TargetClient.IpAddress)));
-                            LThread.Start();
-                            string response = Connectivity.GetData(clientSocket);
-                            currentAction.Response = _formResult;
-                            if (LThread.IsAlive)
-                            {
-                                currentAction.Response = response;
-                                formManual.Invoke(new MethodInvoker(() => formManual.Close()));
-                                LThread.Suspend();
-                            }
+                            ManualForm formManual = new ManualForm() { 
+                                Text = "Orchestrator", 
+                                TestAction = currentAction,
+                                Instruction = currentAction.Operation.Directive 
+                            };
+                            this.Invoke(new MethodInvoker(() => ShowManualForm(formManual)));
+                            string response = Connectivity.GetData(clientSocket); 
+                            if (!formManual.IsDisposed) this.Invoke(new MethodInvoker(() => formManual.Close()));
+                            currentAction.Response = response;
                         }
                         else
                         {
@@ -186,13 +183,17 @@ namespace Orchestrator
             } 
         }
 
-        private void LocalMessageHandler(ManualForm frmMan, IPAddress ip_add)
-        {
-            frmMan.ShowDialog();
-            _formResult = frmMan.Answer + "  Comment: " + frmMan.Comment;
+        private void ShowManualForm(ManualForm frmMan) {
+            frmMan.Show();
+            frmMan.ManualAssertionRaised += OnManualAssertionRaised;
+        }
+
+        private void OnManualAssertionRaised(object sender, EventArgs e) {
+            var frmMan = (ManualForm)sender;
+            var formResult = frmMan.Answer + "  Comment: " + frmMan.Comment;
             TcpClient clientSocketManual = new TcpClient();
-            clientSocketManual.Connect(ip_add, Constants.MANUAL_ANSWER_PORT);
-            Connectivity.SendData(clientSocketManual, "done");
+            clientSocketManual.Connect(frmMan.TestAction.TargetClient.IpAddress, Constants.MANUAL_ANSWER_PORT);
+            Connectivity.SendData(clientSocketManual, formResult);
             clientSocketManual.Close();
         }
 

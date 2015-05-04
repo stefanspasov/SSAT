@@ -45,16 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonForms\ManualWinForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="CommonForms\ManualWinForm.Designer.cs">
-      <DependentUpon>ManualWinForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Entities\Client.cs" />
     <Compile Include="CommonForms\ManualForm.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="CommonForms\ManualForm.Designer.cs">
+      <DependentUpon>ManualForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Entities\Client.cs" />
     <Compile Include="Entities\Step.cs" />
     <Compile Include="Entities\TestAction.cs" />
     <Compile Include="Entities\TestCase.cs" />
@@ -94,8 +91,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="CommonForms\ManualWinForm.resx">
-      <DependentUpon>ManualWinForm.cs</DependentUpon>
+    <EmbeddedResource Include="CommonForms\ManualForm.resx">
+      <DependentUpon>ManualForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
