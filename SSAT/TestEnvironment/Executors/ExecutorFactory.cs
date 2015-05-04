@@ -38,11 +38,8 @@ namespace TestEnvironment.Executors
                     }
                     return cmdE;
                 case TestTechnology.Human:
-                   if (manE == null)
-                    {
-                        manE = new ManualExecutor();
-                    }
-                   return manE;
+                    manE = new ManualExecutor();// Cannot be singleton
+                    return manE;
                 case TestTechnology.Sikuli:
                     if (sikE == null)
                     {

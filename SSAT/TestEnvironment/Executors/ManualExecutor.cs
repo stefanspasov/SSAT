@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using TestEnvironment;
+using TestEnvironment.CommonForms;
 namespace TestEnvironment.Executors
 {
     public class ManualExecutor : IExecutor
@@ -15,7 +16,7 @@ namespace TestEnvironment.Executors
         string _answer = "";
         public string Execute(string source)
         {
-            ManualForm formManual = new ManualForm("Client", source);
+            ManualForm formManual = new ManualForm() { Text = "Client", Instruction = source };
             TcpListener openSocketForScriptAnswer = new TcpListener(Constants.MANUAL_ANSWER_PORT);
             openSocketForScriptAnswer.Start();
             Thread RMThread = new Thread(new ThreadStart(() => RemoteMessageHandler(openSocketForScriptAnswer)));

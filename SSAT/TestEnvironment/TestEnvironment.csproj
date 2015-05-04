@@ -45,6 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommonForms\ManualWinForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="CommonForms\ManualWinForm.Designer.cs">
+      <DependentUpon>ManualWinForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Entities\Client.cs" />
     <Compile Include="CommonForms\ManualForm.cs">
       <SubType>Form</SubType>
@@ -86,6 +92,11 @@
     <Content Include="Scripts\sikuli-server.sikuli\sikuli-server.py">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CommonForms\ManualWinForm.resx">
+      <DependentUpon>ManualWinForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

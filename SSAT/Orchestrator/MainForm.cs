@@ -14,6 +14,9 @@ using Newtonsoft.Json;
 using TestEnvironment.Entities;
 using System.IO;
 using TestEnvironment;
+using System.Configuration;
+using System.Collections.Specialized;
+using TestEnvironment.CommonForms;
 namespace Orchestrator
 {
     public partial class MainForm : Form
@@ -115,7 +118,7 @@ namespace Orchestrator
                         Connectivity.SendData(clientSocket, JsonConvert.SerializeObject(currentAction.Operation));
                         if (currentAction.Operation.Executor == TestTechnology.Human)
                         {
-                            ManualForm formManual = new ManualForm("Orchestrator", currentAction.Operation.Directive);
+                            ManualForm formManual = new ManualForm() { Text = "Orchestrator", Instruction = currentAction.Operation.Directive };
                             Thread LThread = new Thread(new ThreadStart(() => LocalMessageHandler(formManual, currentAction.TargetClient.IpAddress)));
                             LThread.Start();
                             string response = Connectivity.GetData(clientSocket);
@@ -125,7 +128,7 @@ namespace Orchestrator
                                 currentAction.Response = response;
                                 formManual.Invoke(new MethodInvoker(() => formManual.Close()));
                                 LThread.Suspend();
-                            }    
+                            }
                         }
                         else
                         {
@@ -143,6 +146,19 @@ namespace Orchestrator
                                           string.IsNullOrEmpty(currentAction.Response) ? "<no response>" : currentAction.Response);
                         // TODO This is the temporary check for failed actions and should be changed
                         if (currentAction.Response.Contains("failed")) {
+                            // TODO make it better
+                            var clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
+                            foreach (var key in clientCollection.AllKeys) {
+                                try {
+                                    Operation o3 = new Operation("<stop>", TestTechnology.Sim);
+                                    TestAction ta3 = new TestAction { TargetClient = new Client { IpAddress = IPAddress.Parse(clientCollection[key]), Name = "ESTRIP_1" }, Operation = o3, HasFile = false, Description = "Stop the sim" };
+                                    TcpClient cs = new TcpClient();
+                                    cs.Connect(currentAction.TargetClient.IpAddress, Constants.RUN_SCRIPT_PORT);
+                                    Connectivity.SendData(cs, JsonConvert.SerializeObject(o3));
+                                    clientSocket.Close();
+                                } catch { }
+                            }
+
                             currentAction.Status = TestStatus.Failed;
                             testCase.Status = TestStatus.Failed;
                             worker.ReportProgress(1, testCase.Id);

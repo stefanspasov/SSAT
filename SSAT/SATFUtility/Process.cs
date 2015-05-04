@@ -32,28 +32,21 @@ namespace SATFUtilities
         public static void StartProcessAsAdmin(String command)
         {
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
-            procStartInfo.RedirectStandardOutput = true;
-            procStartInfo.UseShellExecute = false;
+            procStartInfo.UseShellExecute = true;
             procStartInfo.CreateNoWindow = true;
-            procStartInfo.UserName = ConfigurationManager.AppSettings["username"];
-            procStartInfo.Password = SATFUtilities.Security.MakeSecureString(ConfigurationManager.AppSettings["password"]);
+            procStartInfo.Verb = "runas";
+            // Reason for commenting out the following code:
+            // Using administrator's credentials doesn't work on Windows 7
+            // Change the solution to "runas" instead.
+            // 
+            //procStartInfo.RedirectStandardOutput = true;
+            //procStartInfo.UserName = ConfigurationManager.AppSettings["username"];
+            //procStartInfo.Password = SATFUtilities.Security.MakeSecureString(ConfigurationManager.AppSettings["password"]);
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
 
             proc.StartInfo = procStartInfo;
-            try
-            {
-                proc.Start();
-            }
-            catch (Win32Exception)
-            {
-                Console.WriteLine(
-                    string.Format("Fail to start Sikuli server with Administrator credentials: username={0} and password={1}\r\nTry using the current account...", 
-                                  procStartInfo.UserName, procStartInfo.Password));
-                // Fallback to the current account
-                procStartInfo.UserName = string.Empty;
-                procStartInfo.Password = null;
-                proc.Start();
-            }
+            proc.Start();
+
         }
 
         public static void CompressFolder(string originFolderPathFull, string destinationFolderPathFull,  bool includeBaseFolder)
