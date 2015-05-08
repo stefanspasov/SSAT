@@ -1,6 +1,7 @@
 import time
 import imp
 import socket
+import sys
 import unitest
 from unitest import *
 
@@ -20,8 +21,8 @@ while True:
     break
   try:
     imp.load_source("runtime",data)
-  except:
+  except Exception, err:
     try:
-      send("The current execution has been failed.")
+      send("The current execution has been failed: " + sys.exc_info()[0])
     except:
       print "Error"

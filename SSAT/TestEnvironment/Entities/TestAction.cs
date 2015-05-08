@@ -15,6 +15,7 @@ namespace TestEnvironment.Entities
         string _description;
         Client _targetClient;
         Operation _operation;
+        
         string _response;
         FileState _fileState = FileState.NoFile;
         [XmlIgnore]
@@ -69,6 +70,16 @@ namespace TestEnvironment.Entities
                 _fileState = _hasFile ? FileState.NotReady : FileState.NoFile;
             }
         }
+
+        private bool _isCritical = true;
+        [XmlAttribute]
+        public bool IsCritical {
+            get { return _isCritical; }
+            set {
+                _isCritical = value;
+            }
+        }
+
         public TestAction() { }
     }
 

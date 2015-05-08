@@ -142,7 +142,7 @@ namespace Orchestrator
                                           currentAction.TargetClient.IpAddress, currentAction.Description, 
                                           string.IsNullOrEmpty(currentAction.Response) ? "<no response>" : currentAction.Response);
                         // TODO This is the temporary check for failed actions and should be changed
-                        if (currentAction.Response.Contains("failed")) {
+                        if (currentAction.Response.Contains("failed") && currentAction.IsCritical) {
                             // TODO make it better
                             var clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
                             foreach (var key in clientCollection.AllKeys) {
@@ -160,7 +160,13 @@ namespace Orchestrator
                             testCase.Status = TestStatus.Failed;
                             worker.ReportProgress(1, testCase.Id);
                             return;
-                        } else {
+
+                        } else if (currentAction.Response.Contains("failed") && !currentAction.IsCritical)
+	                    {
+                            currentAction.Status = TestStatus.Failed;
+                            worker.ReportProgress(1, testCase.Id);
+	                    }
+                        else {
                             currentAction.Status = TestStatus.Passed;
                             worker.ReportProgress(1, testCase.Id);
                         }

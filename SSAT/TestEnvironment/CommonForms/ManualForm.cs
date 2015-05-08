@@ -27,7 +27,13 @@ namespace TestEnvironment.CommonForms {
         }
 
         public ManualForm() {
+            this.TopMost = true;
+            Load += ManualForm_Load;
             InitializeComponent();
+        }
+
+        void ManualForm_Load(object sender, EventArgs e) {
+            BringToFront(); TopMost = true;
         }
 
         private void _passBt_Click(object sender, EventArgs e) {
