@@ -16,6 +16,10 @@ namespace TestEnvironment.CommonForms {
         private TestAction _testAction;
         public event EventHandler ManualAssertionRaised;
 
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+        [System.Runtime.InteropServices.DllImport("user32.dll")]
+        public static extern void SetFocus(IntPtr hWnd);
         public string Instruction {
             get { return _instructionTb.Text; }
             set { _instructionTb.Text = value; }
@@ -33,7 +37,13 @@ namespace TestEnvironment.CommonForms {
         }
 
         void ManualForm_Load(object sender, EventArgs e) {
-            BringToFront(); TopMost = true;
+            BeginInvoke(new MethodInvoker(() => { 
+                Focus(); 
+                BringToFront(); 
+                TopMost = true; 
+                SwitchToThisWindow(this.Handle, true); 
+                SetFocus(this.Handle); 
+            }));
         }
 
         private void _passBt_Click(object sender, EventArgs e) {

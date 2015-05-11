@@ -33,16 +33,18 @@ namespace TestEnvironment.Executors {
         }
 
         public void StartUp() {
-            ProcessStartInfo pi = new ProcessStartInfo();
-            pi.RedirectStandardInput = true;
-            pi.UseShellExecute = false;
-            pi.WorkingDirectory = Constants.ADEXP_SIM_PATH;
-            pi.FileName = Constants.ADEXP_SIM_PATH + "/ADEXPSim.exe";
-            _simProcess = System.Diagnostics.Process.Start(pi);
-            _streamWriter = _simProcess.StandardInput;
-            _streamWriter.WriteLine("call adexp_setup.txt");
-            System.Threading.Thread.Sleep(7000);
-            _started = true;
+            if (!_started) {
+                ProcessStartInfo pi = new ProcessStartInfo();
+                pi.RedirectStandardInput = true;
+                pi.UseShellExecute = false;
+                pi.WorkingDirectory = Constants.ADEXP_SIM_PATH;
+                pi.FileName = Constants.ADEXP_SIM_PATH + "/ADEXPSim.exe";
+                _simProcess = System.Diagnostics.Process.Start(pi);
+                _streamWriter = _simProcess.StandardInput;
+                _streamWriter.WriteLine("call adexp_setup.txt");
+                System.Threading.Thread.Sleep(7000);
+                _started = true;
+            }
         }
 
         public void ShutDown() {
@@ -51,6 +53,7 @@ namespace TestEnvironment.Executors {
                 _streamWriter.WriteLine();
                 System.Threading.Thread.Sleep(500);
                 _streamWriter.Close();
+                _simProcess.CloseMainWindow();
                 _started = false;
             }
         }

@@ -10,12 +10,18 @@ using SATFUtilities;
 
 namespace TestEnvironment.Executors {
     public class SikuliExecutor : IExecutor {
+        private System.Diagnostics.Process _proc;
         public string Execute(string source) {
             TcpClient clientSocket = new TcpClient();
             clientSocket.Connect(IPAddress.Loopback, Constants.CALL_SCRIPT_PORT);
-            Connectivity.SendData(
-                clientSocket,
-                Path.Combine(Constants.UnzippedScriptFolderClient, source, (source.EndsWith(".sikuli") ? source.Substring(0, source.Length - ".sikuli".Length) : source) + ".py*"));
+            if (source == "<stop>") {
+                Connectivity.SendData(clientSocket, source);
+            } else {
+                Connectivity.SendData(
+                    clientSocket,
+                    Path.Combine(Constants.UnzippedScriptFolderClient, source, 
+                                    (source.EndsWith(".sikuli") ? source.Substring(0, source.Length - ".sikuli".Length) : source) + ".py*"));
+            }
             clientSocket.Close();
             if (source != "<stop>") {
                 return Connectivity.WaitForAnswer(Constants.RESULT_SCRIPT_PORT);
@@ -24,11 +30,16 @@ namespace TestEnvironment.Executors {
         }
 
         public void StartUp() {
-            Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));
+            if (_proc == null) {
+                _proc = Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));
+            }
         }
 
         public void ShutDown() {
-            Execute("<stop>");
+            if (_proc != null) {
+                Execute("<stop>");
+                _proc.CloseMainWindow();
+            }
         }
     }
 }

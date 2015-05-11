@@ -49,8 +49,9 @@ namespace TestEnvironment.Executors {
 
         void LocalMessageHandler(ManualForm frmMan) {
             frmMan.ManualAssertionRaised += OnManualAssertionRaised;
-            Application.Run(frmMan);
-            frmMan.ManualAssertionRaised -= OnManualAssertionRaised;
+            //Application.Run(frmMan);
+            Application.OpenForms[0].Invoke(new MethodInvoker(() => frmMan.Show()));
+            //frmMan.ManualAssertionRaised -= OnManualAssertionRaised;
         }
 
         private void OnManualAssertionRaised(object sender, EventArgs e) {

@@ -14,22 +14,22 @@ namespace SATFUtilities
     public static class Process
     {
 
-        public static void StartSikuliServer(string serverFullPath)
+        public static System.Diagnostics.Process StartSikuliServer(string serverFullPath)
         {
-            try
-            {
-                Console.WriteLine("Starting Sikuli server...");
+            //try
+            //{
+            //    Console.WriteLine("Starting Sikuli server...");
                 string command = Constants.SIKULI_IDE_FULL_PATH + " -r \"" + serverFullPath + "\"";
-                StartProcessAsAdmin(command);
-                Console.WriteLine("Sikuli server started.");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Fail to start Sikuli server. Unexpected behaviors might occur.\r\n" + ex.Message + "\n\nStack Trace:\n" + ex.StackTrace);
-            }
+                return StartProcessAsAdmin(command);
+            //    Console.WriteLine("Sikuli server started.");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("Fail to start Sikuli server. Unexpected behaviors might occur.\r\n" + ex.Message + "\n\nStack Trace:\n" + ex.StackTrace);
+            //}
         }
 
-        public static void StartProcessAsAdmin(String command)
+        public static System.Diagnostics.Process StartProcessAsAdmin(String command)
         {
             System.Diagnostics.ProcessStartInfo procStartInfo = new System.Diagnostics.ProcessStartInfo("cmd", "/c " + command);
             procStartInfo.UseShellExecute = true;
@@ -46,7 +46,7 @@ namespace SATFUtilities
 
             proc.StartInfo = procStartInfo;
             proc.Start();
-
+            return proc;
         }
 
         public static void CompressFolder(string originFolderPathFull, string destinationFolderPathFull,  bool includeBaseFolder)
