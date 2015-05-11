@@ -1,72 +1,31 @@
-﻿using System;
+﻿using Microsoft.Practices.Unity;
+using Microsoft.Practices.Unity.Configuration;
+using SATFUtilities;
+using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TestEnvironment.Entities;
 
-namespace TestEnvironment.Executors
-{
-    public class ExecutorFactory
-    {
-        private ExecutorFactory() { }
+namespace TestEnvironment.Executors {
+    public class ExecutorFactory {
+        private ExecutorFactory() { _container = new UnityContainer().LoadConfiguration(); }
+        private IUnityContainer _container;
         private static ExecutorFactory _instance;
-        private static CmdExecutor cmdE;
-        private static ManualExecutor manE;
-        private static SikuliExecutor sikE;
-        private static SimExecutor simE;
-        private static WriteExecutor wrE;
-        private static UnitTestExecutor utE;
-
-
-        public static ExecutorFactory Instance()
-        {
-            if(_instance == null)
-            {
-                _instance = new ExecutorFactory();
+        public static ExecutorFactory Instance {
+            get {
+                if (_instance == null) {
+                    _instance = new ExecutorFactory();
+                }
+                return _instance;
             }
-            return _instance;
         }
-        public IExecutor CreateExecutor(TestTechnology executorType)
-        {
-            switch (executorType)
-            {
-                case TestTechnology.Cmd:
-                    if (cmdE == null)
-                    {
-                        cmdE = new CmdExecutor();
-                    }
-                    return cmdE;
-                case TestTechnology.Human:
-                    manE = new ManualExecutor();// Cannot be singleton
-                    return manE;
-                case TestTechnology.Sikuli:
-                    if (sikE == null)
-                    {
-                        sikE = new SikuliExecutor();
-                    }
-                    return sikE;
-                case TestTechnology.Sim:
-                   if (simE == null)
-                    {
-                        simE = new SimExecutor();
-                    }
-                   return simE;
-                case TestTechnology.Writer:
-                    if (wrE == null)
-                    {
-                        wrE = new WriteExecutor();
-                    }
-                    return wrE;
-                case TestTechnology.UnitTest:
-                    if (utE == null)
-                    {
-                        utE = new UnitTestExecutor();
-                    }
-                    return utE;
-                default:
-                    throw new InvalidOperationException();
-            }
+        public IExecutor Resolve(string executorType) {
+            var name = Constants.TestTechnologies[executorType] + "Executor";
+            return _container.IsRegistered<IExecutor>(name) ? _container.Resolve<IExecutor>(name) : null;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Configuration;
 using System.IO;
 
@@ -48,6 +49,26 @@ namespace SATFUtilities
             get
             {
                 return Path.Combine(PROJECT_DIRECTORY, Constants.SETUP_FOLDER);
+            }
+        }
+        private static NameValueCollection _testTechnologies;
+
+        public static NameValueCollection TestTechnologies {
+            get {
+                if (_testTechnologies == null) {
+                    _testTechnologies = ConfigurationManager.GetSection("testTechnologies") as NameValueCollection;
+                }
+                return Constants._testTechnologies; 
+            }
+        }
+        private static NameValueCollection _clientCollection;
+
+        public static NameValueCollection ClientCollection {
+            get {
+                if (_clientCollection == null) {
+                    _clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
+                }
+                return Constants._clientCollection; 
             }
         }
     }

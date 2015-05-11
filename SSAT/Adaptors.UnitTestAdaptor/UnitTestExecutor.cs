@@ -53,5 +53,9 @@ namespace TestEnvironment.Executors {
 
             return result;
         }
+
+        public void StartUp() { }
+
+        public void ShutDown() { }
     }
 }

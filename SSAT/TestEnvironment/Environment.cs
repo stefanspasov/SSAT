@@ -25,11 +25,23 @@ namespace TestEnvironment
                          .Select(a => new { a.TargetClient.IpAddress, TestTechnology = a.Operation.Executor }).Distinct().ToList();
             foreach (var pair in clientTechnologyPairs)
             {
-                IOrganizer organizer = OrganizerFactory.Instance.CreateOrganizer(pair.TestTechnology);
+                IOrganizer organizer = OrganizerFactory.Instance.Resolve(pair.TestTechnology);
                 if (organizer != null)
                 {
                     organizer.Setup(pair.IpAddress);
                 }   
+            }
+        }
+
+        public void TearDown(IEnumerable<TestCase> testCases) {
+            var clientTechnologyPairs =
+                testCases.SelectMany(t => t.Steps).SelectMany(s => s.Actions)
+                         .Select(a => new { a.TargetClient.IpAddress, TestTechnology = a.Operation.Executor }).Distinct().ToList();
+            foreach (var pair in clientTechnologyPairs) {
+                IOrganizer organizer = OrganizerFactory.Instance.Resolve(pair.TestTechnology);
+                if (organizer != null) {
+                    organizer.TearDown(pair.IpAddress);
+                }
             }
         }
     }

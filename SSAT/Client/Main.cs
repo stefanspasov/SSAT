@@ -20,14 +20,15 @@ namespace Client
     {
 
         //DONE ON EXIT
-        private static bool ConsoleCtrlCheck(Process.CtrlTypes ctrlType)
-        {
-            try
-            {
-                IExecutor executor = ExecutorFactory.Instance().CreateExecutor(TestEnvironment.Entities.TestTechnology.Sikuli);
-                executor.Execute("<stop>");
+        private static bool ConsoleCtrlCheck(Process.CtrlTypes ctrlType) {
+            for (int i = 0; i < Constants.TestTechnologies.Count; i++) {
+                try {
+                    var executor = ExecutorFactory.Instance.Resolve(Constants.TestTechnologies[i]);
+                    if (executor != null) {
+                        executor.ShutDown();
+                    }
+                } catch { /*TODO Trace down*/ }
             }
-            catch (Exception) { }
             return true;
         }
 
@@ -38,7 +39,12 @@ namespace Client
             Process.HandlerRoutine hr = new Process.HandlerRoutine(ConsoleCtrlCheck);
             GC.KeepAlive(hr);
             Process.SetConsoleCtrlHandler(hr, true);
-            Process.StartSikuliServer(Path.Combine(Constants.UnzippedScriptFolderClient, Constants.PYTHON_SERVER_NAME));
+            for (int i = 0; i < Constants.TestTechnologies.Count; i++) {
+                var executor = ExecutorFactory.Instance.Resolve(Constants.TestTechnologies[i]);
+                if (executor != null) {
+                    executor.StartUp();
+                }
+            }
             Thread writeScriptThread = new Thread(new ThreadStart(() => WriteScriptThreadHandler(Constants.WRITE_SCRIPT_PORT)));
             writeScriptThread.Start();
             StartFacade();
@@ -82,7 +88,7 @@ namespace Client
                     var operationStr = Connectivity.GetData(client);
                     Console.WriteLine("Executing operation: " + operationStr);
                     var operation = JsonConvert.DeserializeObject<Operation>(operationStr);
-                    IExecutor executor = ExecutorFactory.Instance().CreateExecutor(operation.Executor);
+                    IExecutor executor = ExecutorFactory.Instance.Resolve(operation.Executor);
                     response = executor.Execute(operation.Directive);
                     Console.WriteLine("Operation executed: " + operationStr);
                 } catch (Exception ex) {

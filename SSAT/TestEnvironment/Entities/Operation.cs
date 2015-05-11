@@ -18,9 +18,9 @@ namespace TestEnvironment.Entities
             get { return _directive; }
             set { _directive = value; }
         }
-        TestTechnology _executor;
+        string _executor;
         [XmlAttribute]
-        public TestTechnology Executor
+        public string Executor
         {
             get { return _executor; }
             set { _executor = value; }
@@ -28,7 +28,7 @@ namespace TestEnvironment.Entities
 
         public Operation() { }
 
-        public Operation(string directive, TestTechnology executor) {
+        public Operation(string directive, string executor) {
             _directive = directive;
             _executor = executor;
         }

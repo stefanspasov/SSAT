@@ -115,7 +115,7 @@ namespace Orchestrator
                         TcpClient clientSocket = new TcpClient();
                         clientSocket.Connect(currentAction.TargetClient.IpAddress, Constants.RUN_SCRIPT_PORT);
                         Connectivity.SendData(clientSocket, JsonConvert.SerializeObject(currentAction.Operation));
-                        if (currentAction.Operation.Executor == TestTechnology.Human)
+                        if (currentAction.Operation.Executor == "Human")
                         {
                             ManualForm formManual = new ManualForm() { 
                                 Text = "Orchestrator", 
@@ -144,17 +144,17 @@ namespace Orchestrator
                         // TODO This is the temporary check for failed actions and should be changed
                         if (currentAction.Response.Contains("failed") && currentAction.IsCritical) {
                             // TODO make it better
-                            var clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
-                            foreach (var key in clientCollection.AllKeys) {
-                                try {
-                                    Operation o3 = new Operation("<stop>", TestTechnology.Sim);
-                                    TestAction ta3 = new TestAction { TargetClient = new Client { IpAddress = IPAddress.Parse(clientCollection[key]), Name = "ESTRIP_1" }, Operation = o3, HasFile = false, Description = "Stop the sim" };
-                                    TcpClient cs = new TcpClient();
-                                    cs.Connect(currentAction.TargetClient.IpAddress, Constants.RUN_SCRIPT_PORT);
-                                    Connectivity.SendData(cs, JsonConvert.SerializeObject(o3));
-                                    clientSocket.Close();
-                                } catch { }
-                            }
+                            //var clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
+                            //foreach (var key in clientCollection.AllKeys) {
+                            //    try {
+                            //        Operation o3 = new Operation("<stop>", TestTechnology.Sim);
+                            //        TestAction ta3 = new TestAction { TargetClient = new Client { IpAddress = IPAddress.Parse(clientCollection[key]), Name = "ESTRIP_1" }, Operation = o3, HasFile = false, Description = "Stop the sim" };
+                            //        TcpClient cs = new TcpClient();
+                            //        cs.Connect(currentAction.TargetClient.IpAddress, Constants.RUN_SCRIPT_PORT);
+                            //        Connectivity.SendData(cs, JsonConvert.SerializeObject(o3));
+                            //        cs.Close();
+                            //    } catch { }
+                            //}
 
                             currentAction.Status = TestStatus.Failed;
                             testCase.Status = TestStatus.Failed;
@@ -247,16 +247,19 @@ namespace Orchestrator
         private void bw_DoWork(object sender, DoWorkEventArgs e) {
             BackgroundWorker worker = sender as BackgroundWorker;
             var pendings = _testCases.Where(t => t.Status == TestStatus.Pending).ToArray();
-            // TODO Check the environment setup (with many consecutive runs)
             TestEnvironment.Environment.Instance.Setup(pendings);
-            foreach (var testCase in pendings) {
-                if ((worker.CancellationPending == true)) {
-                    e.Cancel = true;
-                    break;
-                } else {
-                    _runningTestCase = testCase;
-                    RunTestCase(testCase, worker, e);
+            try {
+                foreach (var testCase in pendings) {
+                    if ((worker.CancellationPending == true)) {
+                        e.Cancel = true;
+                        break;
+                    } else {
+                        _runningTestCase = testCase;
+                        RunTestCase(testCase, worker, e);
+                    }
                 }
+            } finally {
+                TestEnvironment.Environment.Instance.TearDown(pendings);
             }
         }
 
