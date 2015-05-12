@@ -14,27 +14,20 @@ namespace TestEnvironment.Executors {
         string _answer = string.Empty;
         public string Execute(string source) {
             ManualForm formManual = new ManualForm() { Text = "Client", Instruction = source };
-            TcpListener openSocketForScriptAnswer = new TcpListener(Constants.MANUAL_ANSWER_PORT);
-            openSocketForScriptAnswer.Start();
-            Thread RMThread = new Thread(new ThreadStart(() => RemoteMessageHandler(openSocketForScriptAnswer)));
+            TcpListener listener = new TcpListener(Constants.MANUAL_ANSWER_PORT);
+            listener.Start();
+            Thread RMThread = new Thread(new ThreadStart(() => RemoteMessageHandler(listener)));
             RMThread.Start();
-            Thread LThread = new Thread(new ThreadStart(() => LocalMessageHandler(formManual)));
-            // 2015-05-04
-            // TODO: not sure about this solution (changing the thread to STA)
-            // There was a problem with the previous one, when using Form.ShowDialog and 
-            // invoking Form.Close, sometimes the dialog cannot be closed for some reasons.
-            // The problem right now is that after several manual operations, the Client
-            // stops listening to the Orchestrator.
-            LThread.SetApartmentState(ApartmentState.STA);
-            LThread.Start();
+            formManual.ManualAssertionRaised += OnManualAssertionRaised;
+            Application.OpenForms[0].Invoke(new MethodInvoker(() => formManual.Show()));
             while (string.IsNullOrEmpty(_answer)) {
                 Thread.Sleep(500);
             }
-            if (LThread.IsAlive) {
+            if (!formManual.IsDisposed) {
                 formManual.Invoke(new MethodInvoker(() => formManual.Close()));
             }
             if (RMThread.IsAlive) {
-                openSocketForScriptAnswer.Stop();
+                listener.Stop();
                 RMThread.Suspend();
             }
             return _answer;
@@ -45,13 +38,6 @@ namespace TestEnvironment.Executors {
             _answer = Connectivity.GetData(resultSocket);
             resultSocket.Close();
             listener.Stop();
-        }
-
-        void LocalMessageHandler(ManualForm frmMan) {
-            frmMan.ManualAssertionRaised += OnManualAssertionRaised;
-            //Application.Run(frmMan);
-            Application.OpenForms[0].Invoke(new MethodInvoker(() => frmMan.Show()));
-            //frmMan.ManualAssertionRaised -= OnManualAssertionRaised;
         }
 
         private void OnManualAssertionRaised(object sender, EventArgs e) {

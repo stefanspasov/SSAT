@@ -62,6 +62,7 @@ namespace SSATClient {
         }
 
         void MainForm_Shown(object sender, EventArgs e) {
+            Visible = false;
             for (int i = 0; i < Constants.TestTechnologies.Count; i++) {
                 var executor = ExecutorFactory.Instance.Resolve(Constants.TestTechnologies[i]);
                 if (executor != null) {
@@ -72,7 +73,6 @@ namespace SSATClient {
             _writerThread.Start();
             _executorThread = new Thread(new ThreadStart(() => StartFacade()));
             _executorThread.Start();
-            Visible = false;
         }
 
         public static void WriteScriptThreadHandler(int listeningPort) {

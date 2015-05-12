@@ -143,19 +143,6 @@ namespace Orchestrator
                                           string.IsNullOrEmpty(currentAction.Response) ? "<no response>" : currentAction.Response);
                         // TODO This is the temporary check for failed actions and should be changed
                         if (currentAction.Response.Contains("failed") && currentAction.IsCritical) {
-                            // TODO make it better
-                            //var clientCollection = ConfigurationManager.GetSection("clientCollection") as NameValueCollection;
-                            //foreach (var key in clientCollection.AllKeys) {
-                            //    try {
-                            //        Operation o3 = new Operation("<stop>", TestTechnology.Sim);
-                            //        TestAction ta3 = new TestAction { TargetClient = new Client { IpAddress = IPAddress.Parse(clientCollection[key]), Name = "ESTRIP_1" }, Operation = o3, HasFile = false, Description = "Stop the sim" };
-                            //        TcpClient cs = new TcpClient();
-                            //        cs.Connect(currentAction.TargetClient.IpAddress, Constants.RUN_SCRIPT_PORT);
-                            //        Connectivity.SendData(cs, JsonConvert.SerializeObject(o3));
-                            //        cs.Close();
-                            //    } catch { }
-                            //}
-
                             currentAction.Status = TestStatus.Failed;
                             testCase.Status = TestStatus.Failed;
                             worker.ReportProgress(1, testCase.Id);
