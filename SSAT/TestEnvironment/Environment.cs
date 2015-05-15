@@ -21,7 +21,7 @@ namespace TestEnvironment
         public void Setup(IEnumerable<TestCase> testCases)
         {
             var clientTechnologyPairs = 
-                testCases.SelectMany(t => t.Steps).SelectMany(s => s.Actions)
+                testCases.SelectMany(t => t.TestActions)
                          .Select(a => new { a.TargetClient.IpAddress, TestTechnology = a.Operation.Executor }).Distinct().ToList();
             foreach (var pair in clientTechnologyPairs)
             {
@@ -35,7 +35,7 @@ namespace TestEnvironment
 
         public void TearDown(IEnumerable<TestCase> testCases) {
             var clientTechnologyPairs =
-                testCases.SelectMany(t => t.Steps).SelectMany(s => s.Actions)
+                testCases.SelectMany(t => t.TestActions)
                          .Select(a => new { a.TargetClient.IpAddress, TestTechnology = a.Operation.Executor }).Distinct().ToList();
             foreach (var pair in clientTechnologyPairs) {
                 IOrganizer organizer = OrganizerFactory.Instance.Resolve(pair.TestTechnology);

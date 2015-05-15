@@ -28,61 +28,56 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this._runBt = new System.Windows.Forms.Button();
-            this.labelResult = new System.Windows.Forms.Label();
-            this._reloadBt = new System.Windows.Forms.Button();
+            this.components = new System.ComponentModel.Container();
             this._resTb = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._testTv = new System.Windows.Forms.TreeView();
+            this.contextMenuStrip2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.createToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this._testNameTb = new System.Windows.Forms.TextBox();
+            this._clientDdl = new System.Windows.Forms.ComboBox();
+            this._saveBt = new System.Windows.Forms.Button();
+            this._IsCriticalCb = new System.Windows.Forms.CheckBox();
+            this._executorDdl = new System.Windows.Forms.ComboBox();
+            this._descriptionTb = new System.Windows.Forms.TextBox();
+            this._directiveFileCb = new System.Windows.Forms.CheckBox();
+            this._directiveTb = new System.Windows.Forms.TextBox();
             this._descTb = new System.Windows.Forms.TextBox();
             this._stepTv = new System.Windows.Forms.TreeView();
-            this._cancelBt = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.createToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moveUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.moveDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this._pb = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
             this._testResultLb = new System.Windows.Forms.Label();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newTestSuiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.openTestSuiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.runToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.reloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.contextMenuStrip2.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // _runBt
-            // 
-            this._runBt.Location = new System.Drawing.Point(12, 13);
-            this._runBt.Name = "_runBt";
-            this._runBt.Size = new System.Drawing.Size(75, 23);
-            this._runBt.TabIndex = 2;
-            this._runBt.Text = "Run";
-            this._runBt.UseVisualStyleBackColor = true;
-            this._runBt.Click += new System.EventHandler(this.OnBtnRunClicked);
-            // 
-            // labelResult
-            // 
-            this.labelResult.AutoSize = true;
-            this.labelResult.Location = new System.Drawing.Point(24, 183);
-            this.labelResult.Name = "labelResult";
-            this.labelResult.Size = new System.Drawing.Size(10, 13);
-            this.labelResult.TabIndex = 3;
-            this.labelResult.Text = " ";
-            // 
-            // _reloadBt
-            // 
-            this._reloadBt.Location = new System.Drawing.Point(174, 13);
-            this._reloadBt.Name = "_reloadBt";
-            this._reloadBt.Size = new System.Drawing.Size(75, 23);
-            this._reloadBt.TabIndex = 4;
-            this._reloadBt.Text = "Reload";
-            this._reloadBt.UseVisualStyleBackColor = true;
-            this._reloadBt.Click += new System.EventHandler(this.OnBtnReloadClicked);
             // 
             // _resTb
             // 
-            this._resTb.Location = new System.Drawing.Point(3, 234);
+            this._resTb.Location = new System.Drawing.Point(793, 43);
             this._resTb.Multiline = true;
             this._resTb.Name = "_resTb";
             this._resTb.ReadOnly = true;
             this._resTb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this._resTb.Size = new System.Drawing.Size(449, 159);
+            this._resTb.Size = new System.Drawing.Size(450, 454);
             this._resTb.TabIndex = 7;
             // 
             // splitContainer1
@@ -96,9 +91,16 @@
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.Controls.Add(this._testNameTb);
+            this.splitContainer1.Panel2.Controls.Add(this._clientDdl);
+            this.splitContainer1.Panel2.Controls.Add(this._saveBt);
+            this.splitContainer1.Panel2.Controls.Add(this._IsCriticalCb);
+            this.splitContainer1.Panel2.Controls.Add(this._executorDdl);
+            this.splitContainer1.Panel2.Controls.Add(this._descriptionTb);
+            this.splitContainer1.Panel2.Controls.Add(this._directiveFileCb);
+            this.splitContainer1.Panel2.Controls.Add(this._directiveTb);
             this.splitContainer1.Panel2.Controls.Add(this._descTb);
             this.splitContainer1.Panel2.Controls.Add(this._stepTv);
-            this.splitContainer1.Panel2.Controls.Add(this._resTb);
             this.splitContainer1.Size = new System.Drawing.Size(775, 404);
             this.splitContainer1.SplitterDistance = 316;
             this.splitContainer1.TabIndex = 8;
@@ -107,40 +109,161 @@
             // _testTv
             // 
             this._testTv.CheckBoxes = true;
+            this._testTv.ContextMenuStrip = this.contextMenuStrip2;
             this._testTv.HideSelection = false;
             this._testTv.Location = new System.Drawing.Point(3, 6);
             this._testTv.Name = "_testTv";
             this._testTv.Size = new System.Drawing.Size(310, 387);
             this._testTv.TabIndex = 6;
             this._testTv.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.OnTestCaseSelectionChanged);
+            this._testTv.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._testTv_NodeMouseClick);
+            // 
+            // contextMenuStrip2
+            // 
+            this.contextMenuStrip2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createToolStripMenuItem1,
+            this.deleteToolStripMenuItem1});
+            this.contextMenuStrip2.Name = "contextMenuStrip2";
+            this.contextMenuStrip2.Size = new System.Drawing.Size(109, 48);
+            // 
+            // createToolStripMenuItem1
+            // 
+            this.createToolStripMenuItem1.Name = "createToolStripMenuItem1";
+            this.createToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.createToolStripMenuItem1.Text = "Create";
+            this.createToolStripMenuItem1.Click += new System.EventHandler(this.createToolStripMenuItem1_Click);
+            // 
+            // deleteToolStripMenuItem1
+            // 
+            this.deleteToolStripMenuItem1.Name = "deleteToolStripMenuItem1";
+            this.deleteToolStripMenuItem1.Size = new System.Drawing.Size(108, 22);
+            this.deleteToolStripMenuItem1.Text = "Delete";
+            this.deleteToolStripMenuItem1.Click += new System.EventHandler(this.deleteToolStripMenuItem1_Click);
+            // 
+            // _testNameTb
+            // 
+            this._testNameTb.Location = new System.Drawing.Point(4, 6);
+            this._testNameTb.Name = "_testNameTb";
+            this._testNameTb.Size = new System.Drawing.Size(447, 20);
+            this._testNameTb.TabIndex = 18;
+            // 
+            // _clientDdl
+            // 
+            this._clientDdl.FormattingEnabled = true;
+            this._clientDdl.Location = new System.Drawing.Point(4, 234);
+            this._clientDdl.Name = "_clientDdl";
+            this._clientDdl.Size = new System.Drawing.Size(271, 21);
+            this._clientDdl.TabIndex = 17;
+            // 
+            // _saveBt
+            // 
+            this._saveBt.Location = new System.Drawing.Point(392, 371);
+            this._saveBt.Name = "_saveBt";
+            this._saveBt.Size = new System.Drawing.Size(59, 23);
+            this._saveBt.TabIndex = 16;
+            this._saveBt.Text = "Save";
+            this._saveBt.UseVisualStyleBackColor = true;
+            this._saveBt.Click += new System.EventHandler(this._saveBt_Click);
+            // 
+            // _IsCriticalCb
+            // 
+            this._IsCriticalCb.AutoSize = true;
+            this._IsCriticalCb.Location = new System.Drawing.Point(329, 375);
+            this._IsCriticalCb.Name = "_IsCriticalCb";
+            this._IsCriticalCb.Size = new System.Drawing.Size(57, 17);
+            this._IsCriticalCb.TabIndex = 15;
+            this._IsCriticalCb.Text = "Critical";
+            this._IsCriticalCb.UseVisualStyleBackColor = true;
+            // 
+            // _executorDdl
+            // 
+            this._executorDdl.FormattingEnabled = true;
+            this._executorDdl.Location = new System.Drawing.Point(281, 234);
+            this._executorDdl.Name = "_executorDdl";
+            this._executorDdl.Size = new System.Drawing.Size(171, 21);
+            this._executorDdl.TabIndex = 14;
+            // 
+            // _descriptionTb
+            // 
+            this._descriptionTb.Location = new System.Drawing.Point(4, 260);
+            this._descriptionTb.Multiline = true;
+            this._descriptionTb.Name = "_descriptionTb";
+            this._descriptionTb.Size = new System.Drawing.Size(448, 107);
+            this._descriptionTb.TabIndex = 13;
+            // 
+            // _directiveFileCb
+            // 
+            this._directiveFileCb.AutoSize = true;
+            this._directiveFileCb.Location = new System.Drawing.Point(281, 376);
+            this._directiveFileCb.Name = "_directiveFileCb";
+            this._directiveFileCb.Size = new System.Drawing.Size(42, 17);
+            this._directiveFileCb.TabIndex = 12;
+            this._directiveFileCb.Text = "File";
+            this._directiveFileCb.UseVisualStyleBackColor = true;
+            // 
+            // _directiveTb
+            // 
+            this._directiveTb.Location = new System.Drawing.Point(4, 373);
+            this._directiveTb.Name = "_directiveTb";
+            this._directiveTb.Size = new System.Drawing.Size(271, 20);
+            this._directiveTb.TabIndex = 11;
             // 
             // _descTb
             // 
-            this._descTb.Location = new System.Drawing.Point(4, 6);
+            this._descTb.Location = new System.Drawing.Point(4, 32);
             this._descTb.Multiline = true;
             this._descTb.Name = "_descTb";
-            this._descTb.ReadOnly = true;
             this._descTb.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this._descTb.Size = new System.Drawing.Size(448, 58);
+            this._descTb.Size = new System.Drawing.Size(448, 42);
             this._descTb.TabIndex = 9;
             // 
             // _stepTv
             // 
-            this._stepTv.Location = new System.Drawing.Point(3, 70);
+            this._stepTv.ContextMenuStrip = this.contextMenuStrip1;
+            this._stepTv.Location = new System.Drawing.Point(3, 80);
             this._stepTv.Name = "_stepTv";
-            this._stepTv.Size = new System.Drawing.Size(449, 158);
+            this._stepTv.Size = new System.Drawing.Size(449, 148);
             this._stepTv.TabIndex = 8;
+            this._stepTv.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._stepTv_AfterSelect);
+            this._stepTv.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._stepTv_NodeMouseClick);
             // 
-            // _cancelBt
+            // contextMenuStrip1
             // 
-            this._cancelBt.Enabled = false;
-            this._cancelBt.Location = new System.Drawing.Point(93, 13);
-            this._cancelBt.Name = "_cancelBt";
-            this._cancelBt.Size = new System.Drawing.Size(75, 23);
-            this._cancelBt.TabIndex = 9;
-            this._cancelBt.Text = "Cancel";
-            this._cancelBt.UseVisualStyleBackColor = true;
-            this._cancelBt.Click += new System.EventHandler(this.OnBtnCancelClicked);
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.createToolStripMenuItem,
+            this.deleteToolStripMenuItem,
+            this.moveUpToolStripMenuItem,
+            this.moveDownToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(139, 92);
+            // 
+            // createToolStripMenuItem
+            // 
+            this.createToolStripMenuItem.Name = "createToolStripMenuItem";
+            this.createToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.createToolStripMenuItem.Text = "Create";
+            this.createToolStripMenuItem.Click += new System.EventHandler(this.createToolStripMenuItem_Click);
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
+            this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // moveUpToolStripMenuItem
+            // 
+            this.moveUpToolStripMenuItem.Name = "moveUpToolStripMenuItem";
+            this.moveUpToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.moveUpToolStripMenuItem.Text = "Move Up";
+            this.moveUpToolStripMenuItem.Click += new System.EventHandler(this.moveUpToolStripMenuItem_Click);
+            // 
+            // moveDownToolStripMenuItem
+            // 
+            this.moveDownToolStripMenuItem.Name = "moveDownToolStripMenuItem";
+            this.moveDownToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            this.moveDownToolStripMenuItem.Text = "Move Down";
+            this.moveDownToolStripMenuItem.Click += new System.EventHandler(this.moveDownToolStripMenuItem_Click);
             // 
             // _pb
             // 
@@ -168,19 +291,85 @@
             this._testResultLb.TabIndex = 12;
             this._testResultLb.Text = "Tests run (0/0) — Tests passed (0/0)";
             // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.runToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1255, 24);
+            this.menuStrip1.TabIndex = 14;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.newTestSuiteToolStripMenuItem,
+            this.openTestSuiteToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // newTestSuiteToolStripMenuItem
+            // 
+            this.newTestSuiteToolStripMenuItem.Name = "newTestSuiteToolStripMenuItem";
+            this.newTestSuiteToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.newTestSuiteToolStripMenuItem.Text = "New Test Suite";
+            this.newTestSuiteToolStripMenuItem.Click += new System.EventHandler(this.newTestSuiteToolStripMenuItem_Click);
+            // 
+            // openTestSuiteToolStripMenuItem
+            // 
+            this.openTestSuiteToolStripMenuItem.Name = "openTestSuiteToolStripMenuItem";
+            this.openTestSuiteToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.openTestSuiteToolStripMenuItem.Text = "Open Test Suite";
+            this.openTestSuiteToolStripMenuItem.Click += new System.EventHandler(this.openTestSuiteToolStripMenuItem_Click);
+            // 
+            // runToolStripMenuItem
+            // 
+            this.runToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.runToolStripMenuItem1,
+            this.reloadToolStripMenuItem,
+            this.cancelToolStripMenuItem});
+            this.runToolStripMenuItem.Name = "runToolStripMenuItem";
+            this.runToolStripMenuItem.Size = new System.Drawing.Size(41, 20);
+            this.runToolStripMenuItem.Text = "Test";
+            // 
+            // runToolStripMenuItem1
+            // 
+            this.runToolStripMenuItem1.Name = "runToolStripMenuItem1";
+            this.runToolStripMenuItem1.Size = new System.Drawing.Size(110, 22);
+            this.runToolStripMenuItem1.Text = "Run";
+            this.runToolStripMenuItem1.Click += new System.EventHandler(this.runToolStripMenuItem1_Click);
+            // 
+            // reloadToolStripMenuItem
+            // 
+            this.reloadToolStripMenuItem.Name = "reloadToolStripMenuItem";
+            this.reloadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reloadToolStripMenuItem.Text = "Reload";
+            this.reloadToolStripMenuItem.Click += new System.EventHandler(this.reloadToolStripMenuItem_Click);
+            // 
+            // cancelToolStripMenuItem
+            // 
+            this.cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
+            this.cancelToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cancelToolStripMenuItem.Text = "Cancel";
+            this.cancelToolStripMenuItem.Click += new System.EventHandler(this.cancelToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(799, 502);
+            this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.ClientSize = new System.Drawing.Size(1255, 502);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this._testResultLb);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this._resTb);
             this.Controls.Add(this._pb);
-            this.Controls.Add(this._reloadBt);
-            this.Controls.Add(this.labelResult);
-            this.Controls.Add(this._cancelBt);
-            this.Controls.Add(this._runBt);
             this.Controls.Add(this.splitContainer1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "MainForm";
             this.Text = "Orchestrator";
             this.Load += new System.EventHandler(this.OnLoaded);
@@ -189,6 +378,10 @@
             this.splitContainer1.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.contextMenuStrip2.ResumeLayout(false);
+            this.contextMenuStrip1.ResumeLayout(false);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -196,18 +389,38 @@
 
         #endregion
 
-        private System.Windows.Forms.Button _runBt;
-        private System.Windows.Forms.Label labelResult;
-        private System.Windows.Forms.Button _reloadBt;
         private System.Windows.Forms.TextBox _resTb;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TreeView _testTv;
         private System.Windows.Forms.TextBox _descTb;
         private System.Windows.Forms.TreeView _stepTv;
-        private System.Windows.Forms.Button _cancelBt;
         private System.Windows.Forms.ProgressBar _pb;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label _testResultLb;
+        private System.Windows.Forms.CheckBox _IsCriticalCb;
+        private System.Windows.Forms.ComboBox _executorDdl;
+        private System.Windows.Forms.TextBox _descriptionTb;
+        private System.Windows.Forms.CheckBox _directiveFileCb;
+        private System.Windows.Forms.TextBox _directiveTb;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem moveUpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem moveDownToolStripMenuItem;
+        private System.Windows.Forms.Button _saveBt;
+        private System.Windows.Forms.ComboBox _clientDdl;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip2;
+        private System.Windows.Forms.ToolStripMenuItem createToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem1;
+        private System.Windows.Forms.TextBox _testNameTb;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newTestSuiteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openTestSuiteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem reloadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem cancelToolStripMenuItem;
     }
 }
 

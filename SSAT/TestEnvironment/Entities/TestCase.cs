@@ -21,11 +21,12 @@ namespace TestEnvironment.Entities {
             get { return _status; }
             set { _status = value; }
         }
-        List<Step> _steps;
-        public List<Step> Steps {
+        List<TestAction> _testActions;
+        public List<TestAction> TestActions
+        {
             get {
-                if (_steps == null) _steps = new List<Step>();
-                return _steps;
+                if (_testActions == null) _testActions = new List<TestAction>();
+                return _testActions;
             }
         }
         string _description;
