@@ -26,7 +26,7 @@ namespace Orchestrator
         private TestCase _runningTestCase;
         private BackgroundWorker _bw = new BackgroundWorker();
         private Dictionary<TestCase, TreeNode> _testNodeDict = new Dictionary<TestCase, TreeNode>();
-        private string currentFile; 
+        private string _currentFile = "test-suite.xml"; 
         public MainForm()
         {
             InitializeComponent();
@@ -41,6 +41,7 @@ namespace Orchestrator
                 _executorDdl.Items.Add(tech);
             }
 
+            cancelToolStripMenuItem.Enabled = false;
             _bw.WorkerReportsProgress = true;
             _bw.WorkerSupportsCancellation = true;
             _bw.DoWork += new DoWorkEventHandler(bw_DoWork);
@@ -56,20 +57,25 @@ namespace Orchestrator
         }
 
         private void OnLoaded(object sender, EventArgs e) {
-           // LoadTestCases();
+            if (!File.Exists(_currentFile)) { return; }
+            LoadTestCases();
         }
 
-        private void LoadTestCases()
-        {
-            _testCases = new TestAccess().LoadTestCases(currentFile);
+        private void LoadTestCases() {
+            if (!File.Exists(_currentFile)) {
+                MessageBox.Show("The test suite does not exist.", "File not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return; 
+            }
+            _testCases = new TestAccess().LoadTestCases(_currentFile);
 
-            UpdateView();
+            UpdateView(_testCases.FirstOrDefault());
         }
 
         private void UpdateView(TestCase selectedTestCase = null, TestAction selectedAction = null)
         {
             _testResultLb.Text = "Tests run (0/0) — Tests passed (0/0)";
             _resTb.Text = _descTb.Text = string.Empty;
+            _testCaseGb.Enabled = _stepGb.Enabled = false;
             _stepTv.Nodes.Clear();
 
             _testTv.BeginUpdate();
@@ -100,7 +106,15 @@ namespace Orchestrator
             }
         }
 
-
+        private void Run() {
+            if (_bw.IsBusy != true) {
+                ResetTestCaseStatuses();
+                _pb.Value = 0;
+                cancelToolStripMenuItem.Enabled = true;
+                reloadToolStripMenuItem.Enabled = runToolStripMenuItem1.Enabled = _runBtn.Enabled = false;
+                _bw.RunWorkerAsync();
+            }
+        }
 
         private void RunTestCase(TestCase testCase, BackgroundWorker worker, DoWorkEventArgs e)
         {
@@ -146,8 +160,8 @@ namespace Orchestrator
 
                     // Save responses to the test and the action
                     // Break the operation if the action is failed.
-                    testCase.Response += 
-                        string.Format("{0} @ {1} : {2}\r\nAction: {3}\r\nResponse: {4}\r\n", 
+                    testCase.Response +=
+                        string.Format("{0} @ {1} : {2}\r\nAction: {3}\r\nResponse: {4}\r\n\r\n", 
                                         DateTime.Now, currentAction.TargetClient.Name, 
                                         currentAction.TargetClient.IpAddress, currentAction.Description, 
                                         string.IsNullOrEmpty(currentAction.Response) ? "<no response>" : currentAction.Response);
@@ -200,35 +214,32 @@ namespace Orchestrator
             clientSocketManual.Close();
         }
 
-        private void OnTestCaseSelectionChanged(object sender, TreeViewEventArgs e)
-        {
-            //if (_selectedTestCase != _testTv.SelectedNode.Tag)
-            ///{
-                _selectedTestCase = _testTv.SelectedNode.Tag as TestCase;
-                if (_selectedTestCase != null)
-                {
-                    _testNameTb.Text = _selectedTestCase.Name;
-                    _descTb.Text = _selectedTestCase.Description;
-                    _resTb.Text = _selectedTestCase.Response;
-                    _stepTv.BeginUpdate();
-                    _stepTv.Nodes.Clear();
-                    _stepTv.Nodes.AddRange(
-                        _selectedTestCase.TestActions
-                                         .Select(a => new TreeNode(a.Description) { 
-                                                          Tag = a, 
-                                                          ImageKey = GetImgKey(a.Status),
-                                                          SelectedImageKey = GetImgKey(a.Status)
-                                                      })
-                                         .ToArray());
-                    _stepTv.EndUpdate();
-                }
-                _descriptionTb.Text = string.Empty;
-                _directiveTb.Text = string.Empty;
-                _directiveFileCb.Checked = false;
-                _clientDdl.SelectedItem = null;
-                _IsCriticalCb.Checked = false;
-                _executorDdl.SelectedItem = null;
-            //}
+        private void OnTestCaseSelectionChanged(object sender, TreeViewEventArgs e) {
+            _selectedTestCase = _testTv.SelectedNode.Tag as TestCase;
+            _stepGb.Enabled = false;
+            if (_selectedTestCase != null) {
+                _testNameTb.Text = _selectedTestCase.Name;
+                _descTb.Text = _selectedTestCase.Description;
+                _resTb.Text = _selectedTestCase.Response;
+                _stepTv.BeginUpdate();
+                _stepTv.Nodes.Clear();
+                _stepTv.Nodes.AddRange(
+                    _selectedTestCase.TestActions
+                                     .Select(a => new TreeNode(a.Description) {
+                                         Tag = a,
+                                         ImageKey = GetImgKey(a.Status),
+                                         SelectedImageKey = GetImgKey(a.Status)
+                                     })
+                                     .ToArray());
+                _stepTv.EndUpdate();
+            }
+            _testCaseGb.Enabled = _selectedTestCase != null;
+            _descriptionTb.Text = string.Empty;
+            _directiveTb.Text = string.Empty;
+            _directiveFileCb.Checked = false;
+            _clientDdl.SelectedItem = null;
+            _IsCriticalCb.Checked = false;
+            _executorDdl.SelectedItem = null;
         }
 
         private void ResetTestCaseStatuses() {
@@ -269,7 +280,7 @@ namespace Orchestrator
 
         private void bw_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
             cancelToolStripMenuItem.Enabled = false;
-            reloadToolStripMenuItem.Enabled = runToolStripMenuItem1.Enabled = true;
+            reloadToolStripMenuItem.Enabled = runToolStripMenuItem1.Enabled = _runBtn.Enabled = true;
             _testResultLb.Text =
                 string.Format("Tests run ({0}/{1}) — Tests passed ({2}/{0}) ",
                     _testCases.Count(t => t.Status != TestStatus.NotRun), _testCases.Count,
@@ -312,10 +323,6 @@ namespace Orchestrator
             }
         }
 
-        private void OnSplitterMoved(object sender, SplitterEventArgs e) {
-            
-        }
-
         private void _stepTv_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
@@ -346,7 +353,7 @@ namespace Orchestrator
             _clientDdl.SelectedItem = _clientDdl.Items[0];
             _executorDdl.SelectedItem = _executorDdl.Items[0];
 
-            new TestAccess().SaveTestCases(_testCases, currentFile);
+            new TestAccess().SaveTestCases(_testCases, _currentFile);
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
@@ -358,7 +365,7 @@ namespace Orchestrator
             }
             _stepTv.Nodes.Remove(selectedNode);
             _selectedTestCase.TestActions.Remove((TestAction)selectedNode.Tag);
-            new TestAccess().SaveTestCases(_testCases, currentFile);
+            new TestAccess().SaveTestCases(_testCases, _currentFile);
         }
 
         private void _saveBt_Click(object sender, EventArgs e)
@@ -381,13 +388,13 @@ namespace Orchestrator
                 selectedAction.Operation.Executor = _executorDdl.SelectedItem.ToString();
             }
 
-            new TestAccess().SaveTestCases(_testCases, currentFile);
+            new TestAccess().SaveTestCases(_testCases, _currentFile);
             UpdateView(testCase, selectedAction);
         }
 
-        private void _stepTv_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            TestAction selectedAction = (TestAction)_stepTv.SelectedNode.Tag ;
+        private void _stepTv_AfterSelect(object sender, TreeViewEventArgs e) {
+            TestAction selectedAction = (TestAction)_stepTv.SelectedNode.Tag;
+            _stepGb.Enabled = true;
             _descriptionTb.Text = selectedAction.Description;
             _directiveTb.Text = selectedAction.Operation.Directive;
             _directiveFileCb.Checked = selectedAction.HasFile;
@@ -447,7 +454,7 @@ namespace Orchestrator
             _testTv.Nodes.Insert(selectedNodeIndex + 1, newNode);
             _testCases.Insert(selectedNodeIndex + 1, newTestCase);
             _testTv.SelectedNode = newNode;
-            new TestAccess().SaveTestCases(_testCases, currentFile);
+            new TestAccess().SaveTestCases(_testCases, _currentFile);
         }
 
         private void deleteToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -459,19 +466,11 @@ namespace Orchestrator
             }
             _testTv.Nodes.Remove(selectedNode);
             _testCases.Remove((TestCase)selectedNode.Tag);
-            new TestAccess().SaveTestCases(_testCases, currentFile);
+            new TestAccess().SaveTestCases(_testCases, _currentFile);
         }
 
-        private void runToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (_bw.IsBusy != true)
-            {
-                ResetTestCaseStatuses();
-                _pb.Value = 0;
-                cancelToolStripMenuItem.Enabled = true;
-                reloadToolStripMenuItem.Enabled = runToolStripMenuItem1.Enabled = false;
-                _bw.RunWorkerAsync();
-            }
+        private void runToolStripMenuItem1_Click(object sender, EventArgs e) {
+            Run();
         }
 
         private void reloadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -496,9 +495,8 @@ namespace Orchestrator
             {
                 try
                 {
-                    _testCases = (new TestAccess()).LoadTestCases(openFileDialog1.SafeFileName);
-                    currentFile = openFileDialog1.SafeFileName;
-                    UpdateView();
+                    _currentFile = openFileDialog1.SafeFileName;
+                    LoadTestCases();
                 }
                 catch (Exception ex)
                 {
@@ -509,19 +507,50 @@ namespace Orchestrator
 
         private void newTestSuiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SaveFileDialog openFileDialog1 = new SaveFileDialog();
-            openFileDialog1.RestoreDirectory = true;
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.RestoreDirectory = true;
+            sfd.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*";
 
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            if (sfd.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    (new TestAccess()).SaveTestCases(_testCases, Path.GetFileName(openFileDialog1.FileName));
-                    currentFile = Path.GetFileName(openFileDialog1.FileName);
+                    (new TestAccess()).SaveTestCases(_testCases, Path.GetFileName(sfd.FileName));
+                    _currentFile = Path.GetFileName(sfd.FileName);
                     UpdateView();
                 }
                 catch (Exception ex)
                 {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+            }
+        }
+
+        private void _runBtn_Click(object sender, EventArgs e) {
+            Run();
+        }
+
+        private void exportTestResultsToolStripMenuItem_Click(object sender, EventArgs e) {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.RestoreDirectory = true;
+            sfd.Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*";
+
+            if (sfd.ShowDialog() == DialogResult.OK) {
+                try {
+                    var sb = new StringBuilder();
+                    sb.AppendLine(  "*****************************TEST RESULT*****************************");
+                    sb.AppendFormat("Test suite: {0}\r\n", _currentFile);
+                    sb.AppendFormat("Run time:   {0}\r\n", DateTime.Now);
+                    sb.AppendFormat("Status:     {0}\r\n", _testResultLb.Text);
+                    sb.AppendLine(  "*********************************************************************");
+                    foreach (var test in _testCases) {
+                        sb.AppendFormat("Test name: {0}\r\n", test.Name);
+                        sb.AppendFormat("Status: {0}\r\n\r\n", test.Status);
+                        sb.AppendLine(test.Response);
+                        sb.AppendLine("---------------------------------------------------------------------");
+                    }
+                    File.WriteAllText(sfd.FileName, sb.ToString());
+                } catch (Exception ex) {
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
