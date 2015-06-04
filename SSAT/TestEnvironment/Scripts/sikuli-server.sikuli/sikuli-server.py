@@ -23,6 +23,7 @@ while True:
     imp.load_source("runtime",data)
   except Exception, err:
     try:
-      send("The current execution has been failed: " + sys.exc_info()[0])
+      exc_type, exc_value, exc_traceback = sys.exc_info()
+      send("The current execution has been failed with the following exception:\n" + str(exc_type) + "\n" + str(exc_value) + "\n" + str(exc_traceback))
     except:
       print "Error"
