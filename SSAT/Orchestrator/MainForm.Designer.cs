@@ -110,7 +110,7 @@
             // 
             // _saveBt
             // 
-            this._saveBt.Location = new System.Drawing.Point(725, 51);
+            this._saveBt.Location = new System.Drawing.Point(721, 51);
             this._saveBt.Name = "_saveBt";
             this._saveBt.Size = new System.Drawing.Size(59, 23);
             this._saveBt.TabIndex = 16;
@@ -160,7 +160,7 @@
             // 
             this._pb.Location = new System.Drawing.Point(15, 27);
             this._pb.Name = "_pb";
-            this._pb.Size = new System.Drawing.Size(769, 23);
+            this._pb.Size = new System.Drawing.Size(765, 23);
             this._pb.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this._pb.TabIndex = 10;
             // 
@@ -278,7 +278,7 @@
             // 
             this._testNameTb.Location = new System.Drawing.Point(6, 14);
             this._testNameTb.Name = "_testNameTb";
-            this._testNameTb.Size = new System.Drawing.Size(440, 20);
+            this._testNameTb.Size = new System.Drawing.Size(441, 20);
             this._testNameTb.TabIndex = 18;
             // 
             // _stepGb
@@ -302,7 +302,7 @@
             this._descriptionTb.Location = new System.Drawing.Point(6, 46);
             this._descriptionTb.Multiline = true;
             this._descriptionTb.Name = "_descriptionTb";
-            this._descriptionTb.Size = new System.Drawing.Size(439, 63);
+            this._descriptionTb.Size = new System.Drawing.Size(441, 63);
             this._descriptionTb.TabIndex = 13;
             // 
             // _clientDdl
@@ -312,6 +312,7 @@
             this._clientDdl.Name = "_clientDdl";
             this._clientDdl.Size = new System.Drawing.Size(159, 21);
             this._clientDdl.TabIndex = 17;
+            this._clientDdl.SelectedIndexChanged += new System.EventHandler(this._clientDdl_SelectedIndexChanged);
             // 
             // _directiveTb
             // 
@@ -323,7 +324,7 @@
             // _directiveFileCb
             // 
             this._directiveFileCb.AutoSize = true;
-            this._directiveFileCb.Location = new System.Drawing.Point(386, 117);
+            this._directiveFileCb.Location = new System.Drawing.Point(390, 117);
             this._directiveFileCb.Name = "_directiveFileCb";
             this._directiveFileCb.Size = new System.Drawing.Size(42, 17);
             this._directiveFileCb.TabIndex = 12;
@@ -333,7 +334,7 @@
             // _IsCriticalCb
             // 
             this._IsCriticalCb.AutoSize = true;
-            this._IsCriticalCb.Location = new System.Drawing.Point(386, 21);
+            this._IsCriticalCb.Location = new System.Drawing.Point(390, 21);
             this._IsCriticalCb.Name = "_IsCriticalCb";
             this._IsCriticalCb.Size = new System.Drawing.Size(57, 17);
             this._IsCriticalCb.TabIndex = 15;

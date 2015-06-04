@@ -254,7 +254,7 @@ namespace Orchestrator
                 _testNodeDict[testCase].ImageKey = _testNodeDict[testCase].SelectedImageKey = GetImgKey(testCase.Status);
                 // Reset actions' statuses also
                 testCase.TestActions.ToList()
-                    .ForEach(a => { a.Status = TestStatus.NotRun; a.Response = string.Empty; });
+                    .ForEach(a => { a.Status = TestStatus.NotRun; a.Response = string.Empty; a.HasFile = a.HasFile; });
             }
             _testTv.EndUpdate();
         }
@@ -385,7 +385,7 @@ namespace Orchestrator
                 selectedAction.HasFile = _directiveFileCb.Checked;
                 selectedAction.TargetClient.Name = _clientDdl.SelectedItem.ToString();
                 selectedAction.IsCritical = _IsCriticalCb.Checked;
-                selectedAction.Operation.Executor = _executorDdl.SelectedItem.ToString();
+                selectedAction.Operation.Executor = (_executorDdl.SelectedItem ?? "Human").ToString();
             }
 
             new TestAccess().SaveTestCases(_testCases, _currentFile);
@@ -554,6 +554,14 @@ namespace Orchestrator
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
             }
+        }
+
+        private void _clientDdl_SelectedIndexChanged(object sender, EventArgs e) {
+            if (_stepTv.SelectedNode == null) return;
+            var action = (TestAction)_stepTv.SelectedNode.Tag;
+            action.TargetClient.Name = (string)_clientDdl.SelectedItem;
+            if (string.IsNullOrEmpty(action.TargetClient.Name)) return;
+            action.TargetClient.IpAddress = IPAddress.Parse(Constants.ClientCollection[action.TargetClient.Name]);
         }
     }
 }
